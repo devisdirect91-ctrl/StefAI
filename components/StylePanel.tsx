@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { LandingTheme } from "@/types/landing";
 
 type Props = {
@@ -59,9 +60,13 @@ function ToggleGroup<T extends string>({
 }
 
 export default function StylePanel({ theme, onChange }: Props) {
+  const [draft, setDraft] = useState<LandingTheme>(theme);
+
   function set<K extends keyof LandingTheme>(key: K, value: LandingTheme[K]) {
-    onChange({ ...theme, [key]: value });
+    setDraft((prev) => ({ ...prev, [key]: value }));
   }
+
+  const isDirty = JSON.stringify(draft) !== JSON.stringify(theme);
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-b-2xl p-5 space-y-6 w-full">
@@ -71,7 +76,7 @@ export default function StylePanel({ theme, onChange }: Props) {
         <SectionLabel>Color</SectionLabel>
         <div className="flex items-center gap-2.5">
           {PALETTES.map((p) => {
-            const active = theme.palette === p.value;
+            const active = draft.palette === p.value;
             return (
               <button
                 key={p.value}
@@ -99,7 +104,7 @@ export default function StylePanel({ theme, onChange }: Props) {
             { label: "Light", value: "light" as const },
             { label: "Dark",  value: "dark"  as const },
           ]}
-          value={theme.mode}
+          value={draft.mode}
           onChange={(v) => set("mode", v)}
         />
       </div>
@@ -112,7 +117,7 @@ export default function StylePanel({ theme, onChange }: Props) {
             { label: "Medium", value: "md" as const },
             { label: "Large",  value: "lg" as const },
           ]}
-          value={theme.radius}
+          value={draft.radius}
           onChange={(v) => set("radius", v)}
         />
       </div>
@@ -125,7 +130,7 @@ export default function StylePanel({ theme, onChange }: Props) {
             { label: "Normal", value: "default" as const },
             { label: "Large",  value: "relaxed" as const },
           ]}
-          value={theme.spacing}
+          value={draft.spacing}
           onChange={(v) => set("spacing", v)}
         />
       </div>
@@ -135,10 +140,24 @@ export default function StylePanel({ theme, onChange }: Props) {
         <SectionLabel>Font</SectionLabel>
         <ToggleGroup
           options={FONT_OPTIONS}
-          value={theme.fontStyle}
+          value={draft.fontStyle}
           onChange={(v) => set("fontStyle", v)}
         />
       </div>
+
+      {/* Confirm */}
+      <button
+        type="button"
+        disabled={!isDirty}
+        onClick={() => onChange(draft)}
+        className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${
+          isDirty
+            ? "bg-indigo-600 hover:bg-indigo-500 text-white"
+            : "bg-zinc-800 text-zinc-600 cursor-not-allowed"
+        }`}
+      >
+        Confirm
+      </button>
 
     </div>
   );
