@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(CONTENT='{\"\"hero\"\":{\"\"title\"\":\"\"Become a TypeScript Expert in Just 30 Days\"\",\"\"subtitle\"\":\"\"Transform your JavaScript skills and elevate your coding game.\"\",\"\"cta\"\":\"\"Start Your Journey Today\"\"},\"\"benefits\"\":[\"\"Master advanced TypeScript features with ease.\"\",\"\"Build scalable applications that stand out.\"\",\"\"Gain in-demand skills that attract top employers.\"\"],\"\"testimonials\"\":[\"\"This course changed my career!\"\",\"\"I went from beginner to pro in no time.\"\",\"\"I landed my dream job thanks to this course.\"\"],\"\"pricing\"\":{\"\"price\"\":\"\"$299\"\",\"\"guarantee\"\":\"\"30-Day Money-Back Guarantee\"\"}}')",
+      "Bash(__NEW_LINE_a346aa4ff5bff5cf__ curl -s -X POST http://localhost:3000/api/publish -H \"Content-Type: application/json\" -d \"{\"\"content\"\":$CONTENT,\"\"style\"\":\"\"premium\"\",\"\"type\"\":\"\"marketing\"\"}\")",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(cd /c/Users/stefs/landing-saas && npx tsc --noEmit 2>&1)",
+      "Bash(test:*)",
+      "Bash(cd /c/Users/stefs/landing-saas && npm install stripe 2>&1)"
+    ]
+  }
+}
