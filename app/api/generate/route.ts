@@ -41,6 +41,51 @@ const SaasFaqSchema = z.object({
   answer:   z.string(),
 });
 
+// ── Course schemas ─────────────────────────────────────────────────────────
+
+const CourseStatSchema = z.object({
+  value: z.string(),
+  label: z.string(),
+});
+
+const CourseModuleSchema = z.object({
+  title:       z.string(),
+  description: z.string(),
+  lessons:     z.array(z.string()),
+});
+
+const CourseTestimonialSchema = z.object({
+  name: z.string(),
+  role: z.string(),
+  text: z.string(),
+});
+
+const CourseContentSchema = z.object({
+  hero: z.object({
+    title:        z.string(),
+    subtitle:     z.string(),
+    cta:          z.string(),
+    secondaryCta: z.string(),
+  }),
+  stats:    z.array(CourseStatSchema),
+  outcomes: z.array(z.string()),
+  modules:  z.array(CourseModuleSchema),
+  instructor: z.object({
+    name:        z.string(),
+    bio:         z.string(),
+    credentials: z.array(z.string()),
+  }),
+  testimonials: z.array(CourseTestimonialSchema),
+  pricing: z.object({
+    price:     z.string(),
+    period:    z.string(),
+    features:  z.array(z.string()),
+    cta:       z.string(),
+    guarantee: z.string(),
+  }),
+  faq: z.array(SaasFaqSchema),
+});
+
 const SaasContentSchema = z.object({
   hero: z.object({
     title:        z.string(),
@@ -178,6 +223,67 @@ const SAAS_SCHEMA = `{
   }
 }`;
 
+const COURSE_SCHEMA = `{
+  "hero": {
+    "title": "string — outcome-driven headline (max 10 words, e.g. 'Master X in 30 Days')",
+    "subtitle": "string — 1–2 sentences on the transformation students achieve",
+    "cta": "string — enroll CTA (e.g. Enroll Now, Get Instant Access)",
+    "secondaryCta": "string — soft CTA (e.g. Preview Course, Watch Free Lesson)"
+  },
+  "stats": [
+    { "value": "24",     "label": "Video Lessons" },
+    { "value": "6",      "label": "Modules" },
+    { "value": "12h+",   "label": "Video Content" },
+    { "value": "3,800+", "label": "Students Enrolled" }
+  ],
+  "outcomes": [
+    "string — concrete skill, start with an action verb (e.g. 'Build and deploy a production app')",
+    "string", "string", "string", "string", "string"
+  ],
+  "modules": [
+    {
+      "title": "Module 1 – Descriptive Title",
+      "description": "string — 1 sentence on what this module covers",
+      "lessons": ["string — lesson title", "string", "string", "string"]
+    },
+    { "title": "Module 2 – ...", "description": "string", "lessons": ["string", "string", "string"] },
+    { "title": "Module 3 – ...", "description": "string", "lessons": ["string", "string", "string", "string"] },
+    { "title": "Module 4 – ...", "description": "string", "lessons": ["string", "string", "string"] },
+    { "title": "Module 5 – ...", "description": "string", "lessons": ["string", "string", "string", "string"] }
+  ],
+  "instructor": {
+    "name": "string — instructor full name",
+    "bio": "string — 2–3 sentences: background, expertise, results achieved or students taught",
+    "credentials": [
+      "string — e.g. '10+ years industry experience'",
+      "string — e.g. 'Taught 50,000+ students'",
+      "string — e.g. 'Former Google Engineer'"
+    ]
+  },
+  "testimonials": [
+    { "name": "string", "role": "string — e.g. 'Software Developer'", "text": "string — specific, results-focused (2–3 sentences with concrete outcomes)" },
+    { "name": "string", "role": "string", "text": "string" },
+    { "name": "string", "role": "string", "text": "string" }
+  ],
+  "pricing": {
+    "price": "string — e.g. '$197' or '$49'",
+    "period": "string — e.g. 'one-time' or '/ month'",
+    "features": [
+      "string — e.g. 'Lifetime access to all lessons'",
+      "string", "string", "string", "string", "string"
+    ],
+    "cta": "string — e.g. Enroll Now",
+    "guarantee": "string — e.g. '30-day money-back guarantee, no questions asked'"
+  },
+  "faq": [
+    { "question": "string", "answer": "string — 2–4 sentences addressing the concern" },
+    { "question": "string", "answer": "string" },
+    { "question": "string", "answer": "string" },
+    { "question": "string", "answer": "string" },
+    { "question": "string", "answer": "string" }
+  ]
+}`;
+
 function buildBaseSchema(isEbook: boolean): string {
   return `{
   "hero": { "title": "string", "subtitle": "string", "cta": "string" },
@@ -218,6 +324,7 @@ async function handleCreate(raw: unknown): Promise<Response> {
   }
 
   const isEbook   = selectedTemplate.type === "ebook";
+  const isCourse  = selectedTemplate.type === "course";
   const isSaasPro = selectedTemplate.style === "saas-pro";
 
   const userPrompt = isSaasPro
@@ -242,6 +349,29 @@ Rules:
 
 Return ONLY a JSON object in this exact shape — no markdown, no explanation, no code fences:
 ${SAAS_SCHEMA}
+`
+    : isCourse
+    ? `
+You are a conversion-focused course copywriter specializing in online education platforms.
+
+Product name: ${productName}
+Description: ${description}
+
+Tone: inspiring, expert, clear, results-oriented
+Target audience: aspiring learners who want to gain a specific skill or transform their career
+
+Rules:
+- Hero headline: outcome-driven, max 10 words, start with an action verb or transformation statement
+- Outcomes: 6 items, each starting with an action verb (Build, Learn, Master, Create, Deploy, etc.)
+- Modules: 5 modules, each with 3–4 lessons, structured logically from foundations → advanced
+- Instructor: create a credible, expert instructor persona with specific, believable credentials
+- Testimonials: specific, results-focused — include concrete outcomes (e.g. "I got a job offer in 3 months")
+- Pricing: set a realistic single price for an online course ($97–$497 for premium, $29–$79 for accessible)
+- FAQ: address the 5 most common objections (beginner-friendly?, duration?, lifetime access?, refund policy?, prerequisites?)
+- stats: adapt the 4 stats to the course (lesson count, modules, hours of content, student count)
+
+Return ONLY a JSON object in this exact shape — no markdown, no explanation, no code fences:
+${COURSE_SCHEMA}
 `
     : `
 You are a conversion-focused landing page copywriter specializing in ${isEbook ? "ebook and digital product sales" : "online course sales"}.
@@ -280,7 +410,7 @@ Rules for chapters (ebook only): each item must be a plain string formatted as "
   const aiParsed = JSON.parse(aiRaw);
 
   // Validate AI output against the expected schema
-  const schema   = isSaasPro ? SaasContentSchema : BaseContentSchema;
+  const schema   = isSaasPro ? SaasContentSchema : isCourse ? CourseContentSchema : BaseContentSchema;
   const validate = schema.safeParse(aiParsed);
   if (!validate.success) {
     return Response.json(
@@ -346,8 +476,9 @@ async function handleEdit(raw: unknown): Promise<Response> {
   const aiParsed = JSON.parse(aiRaw);
 
   // Detect which schema matches the incoming content shape and validate output
-  const isSaas   = aiParsed.socialProof !== undefined || aiParsed.finalCta !== undefined;
-  const schema   = isSaas ? SaasContentSchema : BaseContentSchema;
+  const isSaas   = "socialProof" in aiParsed || "finalCta"   in aiParsed;
+  const isCourse = "modules"     in aiParsed || "instructor" in aiParsed;
+  const schema   = isSaas ? SaasContentSchema : isCourse ? CourseContentSchema : BaseContentSchema;
   const validate = schema.safeParse(aiParsed);
 
   if (!validate.success) {

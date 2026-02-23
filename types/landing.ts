@@ -1,3 +1,48 @@
+// ── Course template types ──────────────────────────────────────────────────
+
+export type CourseStat = {
+  value: string;
+  label: string;
+};
+
+export type CourseModule = {
+  title:       string;
+  description: string;
+  lessons:     string[];
+};
+
+export type CourseTestimonial = {
+  name: string;
+  role: string;
+  text: string;
+};
+
+export type CourseContent = {
+  hero: {
+    title:        string;
+    subtitle:     string;
+    cta:          string;
+    secondaryCta: string;
+  };
+  stats:        CourseStat[];
+  outcomes:     string[];
+  modules:      CourseModule[];
+  instructor: {
+    name:        string;
+    bio:         string;
+    credentials: string[];
+  };
+  testimonials: CourseTestimonial[];
+  pricing: {
+    price:     string;
+    period:    string;
+    features:  string[];
+    cta:       string;
+    guarantee: string;
+  };
+  faq: Array<{ question: string; answer: string }>;
+};
+
 // ── Legacy atomic types (kept for backward compatibility) ─────────────────
 
 export type HeroSection = {

@@ -7,6 +7,7 @@
 //   data.theme    → all visual class resolution happens HERE, never in sub-renderers
 //   data.settings → conversion / payment config — not used during rendering
 
+import CourseRenderer from "./CourseRenderer";
 import EbookRenderer from "./EbookRenderer";
 import SaasRenderer from "./SaasRenderer";
 import type { LandingData, LandingTheme } from "@/types/landing";
@@ -193,11 +194,12 @@ function resolveTheme(theme: LandingTheme): ResolvedTheme {
 // "ebook"   → content has problems / chapters
 // "generic" → fallback
 
-type RendererKey = "saas" | "ebook" | "generic";
+type RendererKey = "saas" | "ebook" | "course" | "generic";
 
 function detectRenderer(content: Record<string, unknown>): RendererKey {
   if ("socialProof" in content || "finalCta" in content) return "saas";
-  if ("problems" in content || "chapters" in content)    return "ebook";
+  if ("problems"    in content || "chapters"  in content) return "ebook";
+  if ("modules"     in content || "instructor" in content) return "course";
   return "generic";
 }
 
@@ -287,6 +289,11 @@ export default function LandingRenderer({ data, isMobile = false }: Props) {
   // ── Route: SaaS ─────────────────────────────────────────────────────────
   if (renderer === "saas") {
     return <SaasRenderer content={content} isMobile={isMobile} />;
+  }
+
+  // ── Route: Course ────────────────────────────────────────────────────────
+  if (renderer === "course") {
+    return <CourseRenderer content={content} isMobile={isMobile} />;
   }
 
   // ── Route: Ebook ─────────────────────────────────────────────────────────
