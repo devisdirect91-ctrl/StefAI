@@ -12,4 +12,17 @@ export const templates = [
     to: "#7c3aed",
     accent: "#818cf8",
   },
+  {
+    id: "modern-ebook-pro",
+    name: "eBook Landing Page",
+    description: "Modern sales page for eBooks and digital guides — 3D book mockup, chapters, testimonials and one-time pricing.",
+    image:
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+    type: "ebook",
+    style: "modern",
+    tag: "eBook",
+    from: "#18181b",
+    to: "#27272a",
+    accent: "#a1a1aa",
+  },
 ];
