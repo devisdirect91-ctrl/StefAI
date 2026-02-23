@@ -21,7 +21,7 @@ const LandingSettingsSchema = z.object({
 });
 
 const PublishBodySchema = z.object({
-  content:  z.record(z.unknown()),
+  content: z.record(z.string(), z.unknown()),
   theme:    LandingThemeSchema.optional(),
   settings: LandingSettingsSchema.optional(),
   // Legacy fields — accepted for backward compat but not persisted
