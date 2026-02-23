@@ -3,6 +3,47 @@
 // Testimonials · Pricing (3 tiers) · FAQ · Final CTA.
 // Pure React, no client state — compatible with both server and client usage.
 
+import type { LandingTheme } from "@/types/landing";
+
+// ── Theme helpers ─────────────────────────────────────────────────────────
+
+const PALETTE_BTN: Record<string, string> = {
+  indigo:  "bg-indigo-600 hover:bg-indigo-500",
+  violet:  "bg-violet-600 hover:bg-violet-500",
+  emerald: "bg-emerald-600 hover:bg-emerald-500",
+  rose:    "bg-rose-600 hover:bg-rose-500",
+  amber:   "bg-amber-500 hover:bg-amber-400",
+  slate:   "bg-slate-700 hover:bg-slate-600",
+  custom:  "bg-slate-700 hover:bg-slate-600",
+};
+
+const PALETTE_BTN_SHADOW: Record<string, string> = {
+  indigo:  "shadow-indigo-900/40",
+  violet:  "shadow-violet-900/40",
+  emerald: "shadow-emerald-900/40",
+  rose:    "shadow-rose-900/40",
+  amber:   "shadow-amber-900/40",
+  slate:   "shadow-slate-900/40",
+  custom:  "shadow-slate-900/40",
+};
+
+const PALETTE_INVERTED: Record<string, string> = {
+  indigo:  "text-indigo-600 hover:bg-indigo-50",
+  violet:  "text-violet-600 hover:bg-violet-50",
+  emerald: "text-emerald-600 hover:bg-emerald-50",
+  rose:    "text-rose-600 hover:bg-rose-50",
+  amber:   "text-amber-700 hover:bg-amber-50",
+  slate:   "text-slate-700 hover:bg-slate-100",
+  custom:  "text-slate-700 hover:bg-slate-100",
+};
+
+const FONT_MAP: Record<string, string> = {
+  sans:    "font-sans",
+  serif:   "font-serif",
+  mono:    "font-mono",
+  display: "font-sans",
+};
+
 // ── Normalisation helpers ─────────────────────────────────────────────────
 
 function str(obj: Record<string, unknown>, key: string, fallback = ""): string {
@@ -42,13 +83,19 @@ function SectionLabel({ children, light = false }: { children: string; light?: b
 // ── Props ─────────────────────────────────────────────────────────────────
 
 type Props = {
-  content: Record<string, unknown>;
+  content:  Record<string, unknown>;
   isMobile: boolean;
+  theme?:   LandingTheme;
 };
 
 // ── Component ─────────────────────────────────────────────────────────────
 
-export default function SaasRenderer({ content, isMobile }: Props) {
+export default function SaasRenderer({ content, isMobile, theme }: Props) {
+  const pal        = theme?.palette ?? "indigo";
+  const btnBase    = PALETTE_BTN[pal]        ?? PALETTE_BTN.indigo;
+  const btnShadow  = PALETTE_BTN_SHADOW[pal] ?? PALETTE_BTN_SHADOW.indigo;
+  const btnInv     = PALETTE_INVERTED[pal]   ?? PALETTE_INVERTED.indigo;
+  const fontClass  = FONT_MAP[theme?.fontStyle ?? "sans"] ?? "font-sans";
   // ── Normalise every section ──────────────────────────────────────────
   const heroRaw = obj(content, "hero");
   const hero = {
@@ -95,7 +142,7 @@ export default function SaasRenderer({ content, isMobile }: Props) {
   ];
 
   return (
-    <div className="bg-white text-slate-900 font-sans antialiased">
+    <div className={`bg-white text-slate-900 ${fontClass} antialiased`}>
 
       {/* ══ 1. HERO ═══════════════════════════════════════════════════════ */}
       <section className="relative bg-slate-950 text-white overflow-hidden">
@@ -145,7 +192,7 @@ export default function SaasRenderer({ content, isMobile }: Props) {
               isMobile ? "flex-col" : "flex-col sm:flex-row"
             } items-center justify-center gap-4`}
           >
-            <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-xl shadow-indigo-900/40 flex items-center gap-2">
+            <button className={`${btnBase} text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-xl ${btnShadow} flex items-center gap-2`}>
               {hero.cta}
               <svg
                 className="w-4 h-4"
@@ -265,7 +312,7 @@ export default function SaasRenderer({ content, isMobile }: Props) {
                     {demo.description}
                   </p>
                 )}
-                <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-lg shadow-indigo-900/40 flex items-center gap-2 w-fit">
+                <button className={`${btnBase} text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-lg ${btnShadow} flex items-center gap-2 w-fit`}>
                   {demo.cta}
                   <svg
                     className="w-4 h-4"
@@ -537,8 +584,8 @@ export default function SaasRenderer({ content, isMobile }: Props) {
                     <button
                       className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all hover:scale-[1.02] ${
                         highlighted
-                          ? "bg-white text-indigo-600 hover:bg-indigo-50 shadow-md"
-                          : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-md shadow-indigo-200"
+                          ? `bg-white ${btnInv} shadow-md`
+                          : `${btnBase} text-white shadow-md`
                       }`}
                     >
                       {cta}
@@ -630,7 +677,7 @@ export default function SaasRenderer({ content, isMobile }: Props) {
               </p>
             )}
 
-            <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-10 rounded-2xl transition-all hover:scale-105 shadow-2xl shadow-indigo-900/50 inline-flex items-center gap-2">
+            <button className={`${btnBase} text-white font-bold py-4 px-10 rounded-2xl transition-all hover:scale-105 shadow-2xl ${btnShadow} inline-flex items-center gap-2`}>
               {finalCta.cta}
               <svg
                 className="w-4 h-4"

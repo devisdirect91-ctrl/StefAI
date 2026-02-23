@@ -1,6 +1,25 @@
 // Dedicated layout for the "modern-ebook-pro" template.
 // Receives pre-normalized data from LandingRenderer.
 
+import type { LandingTheme } from "@/types/landing";
+
+const PALETTE_BTN: Record<string, string> = {
+  indigo:  "bg-indigo-600 hover:bg-indigo-500",
+  violet:  "bg-violet-600 hover:bg-violet-500",
+  emerald: "bg-emerald-600 hover:bg-emerald-500",
+  rose:    "bg-rose-600 hover:bg-rose-500",
+  amber:   "bg-amber-500 hover:bg-amber-400",
+  slate:   "bg-slate-800 hover:bg-slate-700",
+  custom:  "bg-slate-800 hover:bg-slate-700",
+};
+
+const FONT_MAP: Record<string, string> = {
+  sans:    "font-sans",
+  serif:   "font-serif",
+  mono:    "font-mono",
+  display: "font-sans",
+};
+
 const AVATAR_BG = [
   "bg-violet-500",
   "bg-blue-500",
@@ -116,6 +135,7 @@ type Props = {
   problems: string[];
   chapters: string[];
   isMobile: boolean;
+  theme?: LandingTheme;
 };
 
 // ── Component ──────────────────────────────────────────────────────────────
@@ -128,13 +148,17 @@ export default function EbookRenderer({
   problems,
   chapters,
   isMobile,
+  theme,
 }: Props) {
+  const pal       = theme?.palette ?? "slate";
+  const btnClass  = PALETTE_BTN[pal] ?? PALETTE_BTN.slate;
+  const fontClass = FONT_MAP[theme?.fontStyle ?? "sans"] ?? "font-sans";
   const col3 = isMobile
     ? "grid-cols-1"
     : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3";
 
   return (
-    <div className="bg-white text-gray-900 font-sans">
+    <div className={`bg-white text-gray-900 ${fontClass}`}>
 
       {/* ══ 1. HERO ══════════════════════════════════════════════════════ */}
       <section className="px-6 py-16 md:py-28 max-w-6xl mx-auto">
@@ -169,7 +193,7 @@ export default function EbookRenderer({
 
             {/* CTA */}
             <button
-              className={`bg-black text-white hover:bg-gray-800 active:scale-[0.98] font-bold text-base rounded-2xl py-4 flex items-center justify-center gap-2 transition-all duration-200 hover:scale-105 shadow-md ${isMobile ? "w-full" : "px-8"}`}
+              className={`${btnClass} text-white active:scale-[0.98] font-bold text-base rounded-2xl py-4 flex items-center justify-center gap-2 transition-all duration-200 hover:scale-105 shadow-md ${isMobile ? "w-full" : "px-8"}`}
             >
               {hero.cta}
               <svg
@@ -355,7 +379,7 @@ export default function EbookRenderer({
                 Paiement unique · Accès à vie
               </p>
 
-              <button className="w-full bg-black text-white py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-2 hover:bg-gray-800 transition-all duration-200 hover:scale-105 mb-6">
+              <button className={`w-full ${btnClass} text-white py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition-all duration-200 hover:scale-105 mb-6`}>
                 {hero.cta}
                 <svg
                   className="w-4 h-4 shrink-0"

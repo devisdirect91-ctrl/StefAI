@@ -288,12 +288,12 @@ export default function LandingRenderer({ data, isMobile = false }: Props) {
 
   // ── Route: SaaS ─────────────────────────────────────────────────────────
   if (renderer === "saas") {
-    return <SaasRenderer content={content} isMobile={isMobile} />;
+    return <SaasRenderer content={content} isMobile={isMobile} theme={data.theme} />;
   }
 
   // ── Route: Course ────────────────────────────────────────────────────────
   if (renderer === "course") {
-    return <CourseRenderer content={content} isMobile={isMobile} />;
+    return <CourseRenderer content={content} isMobile={isMobile} theme={data.theme} />;
   }
 
   // ── Route: Ebook ─────────────────────────────────────────────────────────
@@ -307,6 +307,7 @@ export default function LandingRenderer({ data, isMobile = false }: Props) {
         problems={toStringArray(content.problems)}
         chapters={toStringArray(content.chapters)}
         isMobile={isMobile}
+        theme={data.theme}
       />
     );
   }

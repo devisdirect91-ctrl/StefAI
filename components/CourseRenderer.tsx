@@ -3,6 +3,112 @@
 // Instructor · Testimonials · Pricing · FAQ.
 // Pure React, no client state — compatible with both server and client usage.
 
+import type { LandingTheme } from "@/types/landing";
+
+// ── Theme maps ────────────────────────────────────────────────────────────
+
+const PALETTE_BTN: Record<string, string> = {
+  indigo:  "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-900/40",
+  violet:  "bg-violet-600 hover:bg-violet-500 shadow-violet-900/40",
+  emerald: "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/40",
+  rose:    "bg-rose-600 hover:bg-rose-500 shadow-rose-900/40",
+  amber:   "bg-amber-500 hover:bg-amber-400 shadow-amber-900/40",
+  slate:   "bg-slate-700 hover:bg-slate-600 shadow-slate-900/40",
+  custom:  "bg-slate-700 hover:bg-slate-600 shadow-slate-900/40",
+};
+
+const PALETTE_NUM: Record<string, string> = {
+  indigo:  "bg-indigo-600",
+  violet:  "bg-violet-600",
+  emerald: "bg-emerald-600",
+  rose:    "bg-rose-600",
+  amber:   "bg-amber-500",
+  slate:   "bg-slate-600",
+  custom:  "bg-slate-600",
+};
+
+const PALETTE_CHECK: Record<string, string> = {
+  indigo:  "text-indigo-500",
+  violet:  "text-violet-500",
+  emerald: "text-emerald-500",
+  rose:    "text-rose-500",
+  amber:   "text-amber-500",
+  slate:   "text-slate-500",
+  custom:  "text-slate-500",
+};
+
+const PALETTE_CHECK_BG: Record<string, string> = {
+  indigo:  "bg-indigo-100",
+  violet:  "bg-violet-100",
+  emerald: "bg-emerald-100",
+  rose:    "bg-rose-100",
+  amber:   "bg-amber-100",
+  slate:   "bg-slate-200",
+  custom:  "bg-slate-200",
+};
+
+const PALETTE_BADGE: Record<string, string> = {
+  indigo:  "bg-indigo-50 text-indigo-600 border-indigo-100",
+  violet:  "bg-violet-50 text-violet-600 border-violet-100",
+  emerald: "bg-emerald-50 text-emerald-600 border-emerald-100",
+  rose:    "bg-rose-50 text-rose-600 border-rose-100",
+  amber:   "bg-amber-50 text-amber-700 border-amber-100",
+  slate:   "bg-slate-100 text-slate-700 border-slate-200",
+  custom:  "bg-slate-100 text-slate-700 border-slate-200",
+};
+
+const PALETTE_LABEL: Record<string, string> = {
+  indigo:  "text-indigo-500",
+  violet:  "text-violet-500",
+  emerald: "text-emerald-500",
+  rose:    "text-rose-500",
+  amber:   "text-amber-500",
+  slate:   "text-slate-500",
+  custom:  "text-slate-500",
+};
+
+const PALETTE_LABEL_LIGHT: Record<string, string> = {
+  indigo:  "text-indigo-300",
+  violet:  "text-violet-300",
+  emerald: "text-emerald-300",
+  rose:    "text-rose-300",
+  amber:   "text-amber-300",
+  slate:   "text-slate-400",
+  custom:  "text-slate-400",
+};
+
+const PALETTE_DOT: Record<string, string> = {
+  indigo:  "bg-indigo-400",
+  violet:  "bg-violet-400",
+  emerald: "bg-emerald-400",
+  rose:    "bg-rose-400",
+  amber:   "bg-amber-400",
+  slate:   "bg-slate-400",
+  custom:  "bg-slate-400",
+};
+
+const RADIUS_MAP: Record<string, string> = {
+  none: "rounded-none",
+  sm:   "rounded-lg",
+  md:   "rounded-xl",
+  lg:   "rounded-2xl",
+  xl:   "rounded-3xl",
+  full: "rounded-2xl",
+};
+
+const SPACING_MAP: Record<string, string> = {
+  compact: "py-12 md:py-16",
+  default: "py-16 md:py-24",
+  relaxed: "py-20 md:py-28",
+};
+
+const FONT_MAP: Record<string, string> = {
+  sans:    "font-sans",
+  serif:   "font-serif",
+  mono:    "font-mono",
+  display: "font-sans",
+};
+
 // ── Normalisation helpers ─────────────────────────────────────────────────
 
 function str(obj: Record<string, unknown>, key: string, fallback = ""): string {
@@ -24,17 +130,27 @@ function ob(root: Record<string, unknown>, key: string): Record<string, unknown>
 
 // ── Small primitives ──────────────────────────────────────────────────────
 
-function SectionLabel({ children, light = false }: { children: string; light?: boolean }) {
+function SectionLabel({
+  children,
+  light = false,
+  color = "text-indigo-500",
+  colorLight = "text-indigo-300",
+}: {
+  children: string;
+  light?: boolean;
+  color?: string;
+  colorLight?: string;
+}) {
   return (
     <div className="flex flex-col items-center gap-3 mb-4">
       <div
         className={`text-xs font-semibold uppercase tracking-[0.18em] ${
-          light ? "text-indigo-300" : "text-indigo-500"
+          light ? colorLight : color
         }`}
       >
         {children}
       </div>
-      <div className={`w-8 h-px ${light ? "bg-indigo-400/40" : "bg-indigo-400/30"}`} />
+      <div className="w-8 h-px bg-current opacity-30" />
     </div>
   );
 }
@@ -56,13 +172,26 @@ function CheckIcon({ className = "" }: { className?: string }) {
 // ── Props ─────────────────────────────────────────────────────────────────
 
 type Props = {
-  content: Record<string, unknown>;
+  content:  Record<string, unknown>;
   isMobile: boolean;
+  theme?:   LandingTheme;
 };
 
 // ── Component ─────────────────────────────────────────────────────────────
 
-export default function CourseRenderer({ content, isMobile }: Props) {
+export default function CourseRenderer({ content, isMobile, theme }: Props) {
+  const pal       = theme?.palette  ?? "indigo";
+  const btn       = PALETTE_BTN[pal]        ?? PALETTE_BTN.indigo;
+  const numBg     = PALETTE_NUM[pal]        ?? PALETTE_NUM.indigo;
+  const checkTxt  = PALETTE_CHECK[pal]      ?? PALETTE_CHECK.indigo;
+  const checkBg   = PALETTE_CHECK_BG[pal]   ?? PALETTE_CHECK_BG.indigo;
+  const badge     = PALETTE_BADGE[pal]      ?? PALETTE_BADGE.indigo;
+  const labelTxt  = PALETTE_LABEL[pal]      ?? PALETTE_LABEL.indigo;
+  const labelLight = PALETTE_LABEL_LIGHT[pal] ?? PALETTE_LABEL_LIGHT.indigo;
+  const dot       = PALETTE_DOT[pal]        ?? PALETTE_DOT.indigo;
+  const radius    = RADIUS_MAP[theme?.radius  ?? "lg"]      ?? "rounded-2xl";
+  const sectionPy = SPACING_MAP[theme?.spacing ?? "default"] ?? "py-16 md:py-24";
+  const fontClass = FONT_MAP[theme?.fontStyle  ?? "sans"]   ?? "font-sans";
   // ── Normalise sections ────────────────────────────────────────────────
   const heroRaw = ob(content, "hero");
   const hero = {
@@ -115,7 +244,7 @@ export default function CourseRenderer({ content, isMobile }: Props) {
   );
 
   return (
-    <div className="bg-white text-slate-900 font-sans antialiased">
+    <div className={`bg-white text-slate-900 ${fontClass} antialiased`}>
 
       {/* ══ 1. HERO ═══════════════════════════════════════════════════════ */}
       <section className="relative bg-slate-950 text-white overflow-hidden">
@@ -130,8 +259,8 @@ export default function CourseRenderer({ content, isMobile }: Props) {
           }`}
         >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/25 text-indigo-300 rounded-full px-4 py-1.5 text-xs font-semibold mb-8 tracking-wide">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+          <div className={`inline-flex items-center gap-2 bg-white/5 border border-white/15 ${labelLight} rounded-full px-4 py-1.5 text-xs font-semibold mb-8 tracking-wide`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${dot} animate-pulse`} />
             Online Course
           </div>
 
@@ -165,7 +294,7 @@ export default function CourseRenderer({ content, isMobile }: Props) {
               isMobile ? "flex-col" : "flex-col sm:flex-row"
             } items-center justify-center gap-4`}
           >
-            <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-xl shadow-indigo-900/40 flex items-center gap-2">
+            <button className={`${btn} text-white font-bold py-4 px-8 ${radius} transition-all hover:scale-105 shadow-xl flex items-center gap-2`}>
               {hero.cta}
               <svg
                 className="w-4 h-4"
@@ -223,9 +352,9 @@ export default function CourseRenderer({ content, isMobile }: Props) {
 
       {/* ══ 3. OUTCOMES ══════════════════════════════════════════════════ */}
       {outcomes.length > 0 && (
-        <section className="px-6 py-20 md:py-28 max-w-5xl mx-auto">
+        <section className={`px-6 ${sectionPy} max-w-5xl mx-auto`}>
           <div className="text-center mb-16">
-            <SectionLabel>Learning Outcomes</SectionLabel>
+            <SectionLabel color={labelTxt} colorLight={labelLight}>Learning Outcomes</SectionLabel>
             <h2
               className={`font-bold text-slate-900 mt-2 ${
                 isMobile ? "text-2xl" : "text-3xl md:text-4xl"
@@ -242,10 +371,10 @@ export default function CourseRenderer({ content, isMobile }: Props) {
             {outcomes.map((outcome, i) => (
               <div
                 key={i}
-                className="flex items-start gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4"
+                className={`flex items-start gap-3 bg-slate-50 border border-slate-200 ${radius} p-4`}
               >
-                <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <CheckIcon className="text-indigo-600 w-3 h-3" />
+                <div className={`w-5 h-5 rounded-full ${checkBg} flex items-center justify-center shrink-0 mt-0.5`}>
+                  <CheckIcon className={`${checkTxt} w-3 h-3`} />
                 </div>
                 <p className="text-slate-700 text-sm leading-relaxed">{outcome}</p>
               </div>
@@ -256,10 +385,10 @@ export default function CourseRenderer({ content, isMobile }: Props) {
 
       {/* ══ 4. CURRICULUM ════════════════════════════════════════════════ */}
       {modules.length > 0 && (
-        <section className="bg-slate-50 border-y border-slate-200 px-6 py-20 md:py-28">
+        <section className={`bg-slate-50 border-y border-slate-200 px-6 ${sectionPy}`}>
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-16">
-              <SectionLabel>Course Content</SectionLabel>
+              <SectionLabel color={labelTxt} colorLight={labelLight}>Course Content</SectionLabel>
               <h2
                 className={`font-bold text-slate-900 mt-2 ${
                   isMobile ? "text-2xl" : "text-3xl md:text-4xl"
@@ -285,7 +414,7 @@ export default function CourseRenderer({ content, isMobile }: Props) {
                   >
                     {/* Module header */}
                     <div className="px-6 py-5 flex items-start gap-4">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">
+                      <div className={`w-8 h-8 rounded-lg ${numBg} flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5`}>
                         {String(i + 1).padStart(2, "0")}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -333,9 +462,9 @@ export default function CourseRenderer({ content, isMobile }: Props) {
 
       {/* ══ 5. INSTRUCTOR ════════════════════════════════════════════════ */}
       {instructor.name && (
-        <section className="px-6 py-20 md:py-28 max-w-4xl mx-auto">
+        <section className={`px-6 ${sectionPy} max-w-4xl mx-auto`}>
           <div className="text-center mb-16">
-            <SectionLabel>Your Instructor</SectionLabel>
+            <SectionLabel color={labelTxt} colorLight={labelLight}>Your Instructor</SectionLabel>
             <h2
               className={`font-bold text-slate-900 mt-2 ${
                 isMobile ? "text-2xl" : "text-3xl md:text-4xl"
@@ -352,7 +481,7 @@ export default function CourseRenderer({ content, isMobile }: Props) {
           >
             {/* Avatar */}
             <div className="shrink-0">
-              <div className="w-24 h-24 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-3xl font-black">
+              <div className={`w-24 h-24 rounded-2xl ${numBg} flex items-center justify-center text-white text-3xl font-black`}>
                 {instructor.name.charAt(0).toUpperCase()}
               </div>
             </div>
@@ -376,7 +505,7 @@ export default function CourseRenderer({ content, isMobile }: Props) {
                       key={i}
                       className="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-medium px-3 py-1.5 rounded-full"
                     >
-                      <CheckIcon className="text-indigo-500 w-3 h-3" />
+                      <CheckIcon className={`${checkTxt} w-3 h-3`} />
                       {cred}
                     </span>
                   ))}
@@ -389,10 +518,10 @@ export default function CourseRenderer({ content, isMobile }: Props) {
 
       {/* ══ 6. TESTIMONIALS ════════════════════════════════════════════════ */}
       {testimonials.length > 0 && (
-        <section className="bg-slate-50 border-y border-slate-200 px-6 py-20 md:py-28">
+        <section className={`bg-slate-50 border-y border-slate-200 px-6 ${sectionPy}`}>
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
-              <SectionLabel>Student Reviews</SectionLabel>
+              <SectionLabel color={labelTxt} colorLight={labelLight}>Student Reviews</SectionLabel>
               <h2
                 className={`font-bold text-slate-900 mt-2 ${
                   isMobile ? "text-2xl" : "text-3xl md:text-4xl"
@@ -467,7 +596,7 @@ export default function CourseRenderer({ content, isMobile }: Props) {
 
           <div className="relative max-w-md mx-auto">
             <div className="text-center mb-10">
-              <SectionLabel light>Enroll Today</SectionLabel>
+              <SectionLabel light color={labelTxt} colorLight={labelLight}>Enroll Today</SectionLabel>
               <h2
                 className={`font-bold text-white mt-2 ${
                   isMobile ? "text-2xl" : "text-3xl md:text-4xl"
@@ -478,7 +607,7 @@ export default function CourseRenderer({ content, isMobile }: Props) {
             </div>
 
             <div className="bg-white text-slate-900 rounded-3xl p-8 md:p-10">
-              <div className="inline-block bg-indigo-50 text-indigo-600 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border border-indigo-100">
+              <div className={`inline-block ${badge} text-xs font-semibold px-4 py-1.5 rounded-full mb-6 border`}>
                 Full Course Access
               </div>
 
@@ -510,7 +639,7 @@ export default function CourseRenderer({ content, isMobile }: Props) {
                 </ul>
               )}
 
-              <button className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-2 transition-all hover:scale-[1.02] shadow-lg shadow-indigo-200 mb-5">
+              <button className={`w-full ${btn} text-white py-4 ${radius} font-bold text-base flex items-center justify-center gap-2 transition-all hover:scale-[1.02] shadow-lg mb-5`}>
                 {pricing.cta}
                 <svg
                   className="w-4 h-4 shrink-0"
@@ -548,9 +677,9 @@ export default function CourseRenderer({ content, isMobile }: Props) {
 
       {/* ══ 8. FAQ ════════════════════════════════════════════════════════ */}
       {faq.length > 0 && (
-        <section className="px-6 py-20 md:py-28 max-w-3xl mx-auto">
+        <section className={`px-6 ${sectionPy} max-w-3xl mx-auto`}>
           <div className="text-center mb-16">
-            <SectionLabel>FAQ</SectionLabel>
+            <SectionLabel color={labelTxt} colorLight={labelLight}>FAQ</SectionLabel>
             <h2
               className={`font-bold text-slate-900 mt-2 ${
                 isMobile ? "text-2xl" : "text-3xl md:text-4xl"
