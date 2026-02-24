@@ -1,21 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import type { CourseData } from "./course-template/types";
 
-// ── Types ────────────────────────────────────────────────────────────────────
-
-export type CourseAnswers = {
-  title: string;
-  transformation: string;
-  audience: string;
-  problem: string;
-  modules: string;
-  bonus: string;
-  price: string;
-};
+// Re-export so existing imports keep working
+export type CourseAnswers = CourseData;
 
 type Step = {
-  key: keyof CourseAnswers;
+  key: keyof CourseData;
   question: string;
   placeholder: string;
   hint: string;
@@ -85,13 +77,13 @@ const STEPS: Step[] = [
 // ── Component ────────────────────────────────────────────────────────────────
 
 type Props = {
-  onComplete: (answers: CourseAnswers) => void;
+  onComplete: (answers: CourseData) => void;
   loading: boolean;
 };
 
 export default function CourseWizard({ onComplete, loading }: Props) {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<CourseAnswers>({
+  const [answers, setAnswers] = useState<CourseData>({
     title: "",
     transformation: "",
     audience: "",
@@ -105,7 +97,7 @@ export default function CourseWizard({ onComplete, loading }: Props) {
   const value = answers[current.key];
   const isFirst = step === 0;
   const isLast = step === STEPS.length - 1;
-  const canContinue = !!(current.optional || value.trim());
+  const canContinue = !!(current.optional || (value ?? "").trim());
   const progress = ((step + 1) / STEPS.length) * 100;
 
   const handleNext = () => {
