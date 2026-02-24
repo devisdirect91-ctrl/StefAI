@@ -6,33 +6,39 @@ export default function FinalCTASection({ data }: { data: CourseAIContent }) {
   const fcta = data.final_cta;
 
   return (
-    <section className="bg-zinc-950 py-20 md:py-28">
+    <section className="bg-zinc-900 py-16 md:py-28 relative overflow-hidden">
 
-      {/* Full-width accent bar at top */}
-      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent mb-20 md:mb-28" />
+      {/* Top accent line */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
 
-      <div className="max-w-3xl mx-auto px-5 text-center">
+      {/* Ambient glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-indigo-600/6 rounded-full blur-3xl" />
+      </div>
 
-        <p className="text-xs font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-6">
+      <div className="relative max-w-2xl mx-auto px-5 text-center">
+
+        <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-5">
           C&apos;est le moment
         </p>
 
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-[1.15] tracking-tight mb-5">
+        <h2 className="text-[1.8rem] leading-[1.15] sm:text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">
           {fcta.text}
         </h2>
 
-        <p className="text-zinc-400 text-base md:text-lg leading-relaxed mb-10 md:mb-12 max-w-2xl mx-auto">
+        <p className="text-zinc-400 text-[0.95rem] md:text-lg leading-relaxed mb-9 md:mb-11 max-w-xl mx-auto">
           {fcta.subtext}
         </p>
 
-        <button className="inline-flex items-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-10 py-5 rounded-full text-sm md:text-base transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/20">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        {/* CTA — full-width on mobile */}
+        <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold px-10 py-4 md:py-5 rounded-2xl text-[0.92rem] md:text-base transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/20">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
           {cta} — {ps.price}
         </button>
 
-        <p className="text-zinc-600 text-xs mt-5">
+        <p className="text-zinc-600 text-[12px] mt-4">
           Accès immédiat · Paiement sécurisé
           {ps.justification ? ` · ${ps.justification}` : ""}
         </p>

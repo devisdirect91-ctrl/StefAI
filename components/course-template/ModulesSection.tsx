@@ -3,54 +3,30 @@
 import { useState } from "react";
 import type { CourseAIContent, CourseAIModule } from "./types";
 
-// ── Card layout (≤ 6 modules) ────────────────────────────────────────────────
+// ── Mobile-first module row (always used on mobile, grid card on desktop) ──────
 
-function ModuleCard({ mod, index }: { mod: CourseAIModule; index: number }) {
-  return (
-    <div className="group bg-zinc-950 border border-zinc-800 hover:border-indigo-500/30 rounded-2xl p-7 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/5">
-      <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
-          <span className="text-xs font-bold text-indigo-400 tabular-nums">
-            {String(index).padStart(2, "0")}
-          </span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-zinc-100 text-sm mb-2 group-hover:text-white transition-colors">
-            {mod.title}
-          </h3>
-          <p className="text-xs text-zinc-500 leading-relaxed">{mod.description}</p>
-          {mod.outcome && (
-            <p className="text-xs text-indigo-400/80 mt-2.5 leading-relaxed">
-              → {mod.outcome}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Accordion layout (> 6 modules) ───────────────────────────────────────────
-
-function ModuleAccordion({ mod, index }: { mod: CourseAIModule; index: number }) {
+function ModuleRow({ mod, index }: { mod: CourseAIModule; index: number }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="border border-zinc-800 rounded-xl overflow-hidden transition-colors hover:border-zinc-700">
+    <div className="border-b border-zinc-800 last:border-0">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-zinc-900 hover:bg-zinc-800 transition-colors text-left gap-4"
+        className="w-full flex items-center gap-4 py-4 text-left"
       >
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-xs font-bold text-indigo-400 tabular-nums shrink-0">
-            {String(index).padStart(2, "0")}
-          </span>
-          <span className="text-sm font-medium text-zinc-200 truncate">
-            {mod.title}
-          </span>
-        </div>
+        {/* Number */}
+        <span className="shrink-0 w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-[11px] font-bold text-indigo-400 tabular-nums">
+          {String(index).padStart(2, "0")}
+        </span>
+
+        {/* Title */}
+        <span className="flex-1 text-[0.9rem] font-medium text-zinc-200 leading-snug">
+          {mod.title}
+        </span>
+
+        {/* Chevron */}
         <svg
-          className={`shrink-0 text-zinc-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`shrink-0 text-zinc-600 transition-transform duration-200 ${open ? "rotate-180 text-indigo-400" : ""}`}
           width="14" height="14" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" strokeWidth="2"
         >
@@ -59,10 +35,12 @@ function ModuleAccordion({ mod, index }: { mod: CourseAIModule; index: number })
       </button>
 
       {open && (
-        <div className="px-6 py-4 bg-zinc-950 border-t border-zinc-800">
-          <p className="text-sm text-zinc-400 leading-relaxed">{mod.description}</p>
+        <div className="pb-4 pl-11 pr-1">
+          <p className="text-[0.85rem] text-zinc-400 leading-relaxed mb-2">
+            {mod.description}
+          </p>
           {mod.outcome && (
-            <p className="text-xs text-indigo-400/80 mt-3 leading-relaxed">
+            <p className="text-[0.82rem] text-indigo-400/80 leading-relaxed">
               → {mod.outcome}
             </p>
           )}
@@ -72,44 +50,68 @@ function ModuleAccordion({ mod, index }: { mod: CourseAIModule; index: number })
   );
 }
 
-// ── Main section ─────────────────────────────────────────────────────────────
+// ── Desktop card ───────────────────────────────────────────────────────────────
+
+function ModuleCard({ mod, index }: { mod: CourseAIModule; index: number }) {
+  return (
+    <div className="group bg-zinc-950 border border-zinc-800 hover:border-indigo-500/25 rounded-xl p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/5">
+      <div className="flex items-start gap-3">
+        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+          <span className="text-[11px] font-bold text-indigo-400 tabular-nums">
+            {String(index).padStart(2, "0")}
+          </span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-zinc-100 text-[0.88rem] mb-1.5 group-hover:text-white transition-colors leading-snug">
+            {mod.title}
+          </h3>
+          <p className="text-[0.8rem] text-zinc-500 leading-relaxed">{mod.description}</p>
+          {mod.outcome && (
+            <p className="text-[0.78rem] text-indigo-400/75 mt-2 leading-relaxed">
+              → {mod.outcome}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main section ───────────────────────────────────────────────────────────────
 
 export default function ModulesSection({ data }: { data: CourseAIContent }) {
-  const modules      = data.modules;
-  const useAccordion = modules.length > 6;
+  const modules = data.modules;
 
   return (
-    <section className="bg-zinc-900 py-16 md:py-24">
-      <div className="max-w-5xl mx-auto px-5">
+    <section className="bg-zinc-950 py-14 md:py-24">
+      <div className="max-w-4xl mx-auto px-5">
 
         {/* Header */}
-        <div className="text-center mb-10 md:mb-14">
-          <p className="text-xs font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-4">
+        <div className="text-center mb-8 md:mb-12">
+          <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-3">
             Le programme
           </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
             Ce que tu vas apprendre
           </h2>
           <p className="text-zinc-500 text-sm">
-            {modules.length} module{modules.length > 1 ? "s" : ""} pour une progression
-            du débutant à l&apos;expert, sans jamais te perdre.
+            {modules.length} module{modules.length > 1 ? "s" : ""}
           </p>
         </div>
 
-        {/* Grid or Accordion */}
-        {useAccordion ? (
-          <div className="max-w-2xl mx-auto space-y-2">
-            {modules.map((mod, i) => (
-              <ModuleAccordion key={i} mod={mod} index={i + 1} />
-            ))}
-          </div>
-        ) : (
-          <div className="grid sm:grid-cols-2 gap-4">
-            {modules.map((mod, i) => (
-              <ModuleCard key={i} mod={mod} index={i + 1} />
-            ))}
-          </div>
-        )}
+        {/* Mobile: accordion list */}
+        <div className="md:hidden bg-zinc-900 border border-zinc-800 rounded-2xl px-5">
+          {modules.map((mod, i) => (
+            <ModuleRow key={i} mod={mod} index={i + 1} />
+          ))}
+        </div>
+
+        {/* Desktop: 2-col card grid */}
+        <div className="hidden md:grid md:grid-cols-2 gap-3">
+          {modules.map((mod, i) => (
+            <ModuleCard key={i} mod={mod} index={i + 1} />
+          ))}
+        </div>
 
       </div>
     </section>
