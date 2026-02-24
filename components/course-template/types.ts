@@ -1,16 +1,14 @@
-// ── Raw wizard answers (unchanged — still used by CourseWizard) ──────────────
+// ── Raw wizard answers ────────────────────────────────────────────────────────
 
 export type CourseData = {
   title: string;
   transformation: string;
-  audience: string;
-  problem: string;
   modules: string;
   bonus?: string;
   price: string;
 };
 
-// ── AI-structured content (new — consumed by CourseLandingTemplate) ──────────
+// ── AI-structured content (consumed by CourseLandingTemplate) ─────────────────
 
 export type CourseAIModule = {
   title: string;
@@ -28,10 +26,7 @@ export type CourseAIContent = {
   hero: {
     headline: string;
     subheadline: string;
-  };
-  problem_section: {
-    title: string;
-    bullets: string[];
+    cta: string;
   };
   transformation_section: {
     title: string;
@@ -46,11 +41,13 @@ export type CourseAIContent = {
   pricing_section: {
     headline: string;
     justification: string;
-    price: string;
-    cta: string;
-    features: string[];
+    price: string; // injected from wizard input, not AI-generated
   };
   faq: Array<{ question: string; answer: string }>;
+  final_cta: {
+    text: string;
+    subtext: string;
+  };
 };
 
 // ── Legacy parsing type (kept for utils.ts compatibility) ────────────────────

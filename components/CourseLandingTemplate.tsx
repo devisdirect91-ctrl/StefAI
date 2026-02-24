@@ -1,6 +1,5 @@
 import type { CourseAIContent } from "./course-template/types";
 import HeroSection           from "./course-template/HeroSection";
-import ProblemSection        from "./course-template/ProblemSection";
 import TransformationSection from "./course-template/TransformationSection";
 import ModulesSection        from "./course-template/ModulesSection";
 import BonusSection          from "./course-template/BonusSection";
@@ -15,7 +14,6 @@ export default function CourseLandingTemplate({ data }: { data: CourseAIContent 
   return (
     <div className="antialiased">
       <HeroSection           data={data} />
-      <ProblemSection        data={data} />
       <TransformationSection data={data} />
       <ModulesSection        data={data} />
       {data.bonus_section.description?.trim() && <BonusSection data={data} />}

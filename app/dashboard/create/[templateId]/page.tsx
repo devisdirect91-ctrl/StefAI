@@ -26,7 +26,7 @@ function mapAIContentToCourseContent(ai: CourseAIContent): CourseContent {
     hero: {
       title:        ai.hero.headline,
       subtitle:     ai.hero.subheadline,
-      cta:          ai.pricing_section.cta,
+      cta:          ai.hero.cta,
       secondaryCta: "Voir le programme",
     },
     stats: [
@@ -54,8 +54,8 @@ function mapAIContentToCourseContent(ai: CourseAIContent): CourseContent {
     pricing: {
       price:     ai.pricing_section.price,
       period:    "paiement unique",
-      features:  ai.pricing_section.features,
-      cta:       ai.pricing_section.cta,
+      features:  [],
+      cta:       ai.hero.cta,
       guarantee: ai.pricing_section.justification,
     },
     faq: ai.faq,

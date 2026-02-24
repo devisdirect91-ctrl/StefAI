@@ -1,18 +1,19 @@
 import type { CourseAIContent } from "./types";
 
 export default function PricingSection({ data }: { data: CourseAIContent }) {
-  const ps = data.pricing_section;
+  const ps  = data.pricing_section;
+  const cta = data.hero.cta;
 
   return (
-    <section className="bg-zinc-950 py-24">
-      <div className="max-w-xl mx-auto px-6">
+    <section className="bg-zinc-950 py-16 md:py-24">
+      <div className="max-w-sm mx-auto px-5">
 
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-4">
             Tarif
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white leading-snug">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-snug">
             {ps.headline}
           </h2>
         </div>
@@ -28,30 +29,14 @@ export default function PricingSection({ data }: { data: CourseAIContent }) {
             <p className="text-zinc-500 text-sm">paiement unique · accès à vie</p>
           </div>
 
-          {/* Features + CTA */}
+          {/* CTA + justification */}
           <div className="px-8 py-8">
-            <ul className="space-y-3.5 mb-8">
-              {ps.features.map((f, i) => (
-                <li key={i} className="flex items-center gap-3 text-sm text-zinc-300">
-                  <svg
-                    className="shrink-0"
-                    width="16" height="16" viewBox="0 0 24 24"
-                    fill="none" stroke="rgb(99 102 241)"
-                    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  {f}
-                </li>
-              ))}
-            </ul>
-
             <button className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-4 rounded-full text-sm transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/20">
-              {ps.cta} — {ps.price}
+              {cta} — {ps.price}
             </button>
 
             {ps.justification && (
-              <p className="text-center text-xs text-zinc-500 mt-4">
+              <p className="text-center text-xs text-zinc-500 mt-4 leading-relaxed">
                 {ps.justification}
               </p>
             )}

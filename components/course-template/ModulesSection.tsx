@@ -79,15 +79,15 @@ export default function ModulesSection({ data }: { data: CourseAIContent }) {
   const useAccordion = modules.length > 6;
 
   return (
-    <section className="bg-zinc-900 py-24">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="bg-zinc-900 py-16 md:py-24">
+      <div className="max-w-5xl mx-auto px-5">
 
         {/* Header */}
-        <div className="text-center mb-14">
+        <div className="text-center mb-10 md:mb-14">
           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-4">
             Le programme
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
             Ce que tu vas apprendre
           </h2>
           <p className="text-zinc-500 text-sm">
@@ -104,7 +104,7 @@ export default function ModulesSection({ data }: { data: CourseAIContent }) {
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4">
             {modules.map((mod, i) => (
               <ModuleCard key={i} mod={mod} index={i + 1} />
             ))}

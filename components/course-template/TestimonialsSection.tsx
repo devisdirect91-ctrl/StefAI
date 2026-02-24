@@ -46,21 +46,21 @@ function TestimonialCard({ t }: { t: CourseAITestimonial }) {
 
 export default function TestimonialsSection({ data }: { data: CourseAIContent }) {
   return (
-    <section className="bg-zinc-900 py-24">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="bg-zinc-900 py-16 md:py-24">
+      <div className="max-w-5xl mx-auto px-5">
 
         {/* Header */}
-        <div className="text-center mb-14">
+        <div className="text-center mb-10 md:mb-14">
           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-4">
             Ils l&apos;ont fait
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
             Ce que disent les étudiants
           </h2>
         </div>
 
         {/* Testimonial cards */}
-        <div className="grid md:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
           {data.testimonials.map((t, i) => (
             <TestimonialCard key={i} t={t} />
           ))}

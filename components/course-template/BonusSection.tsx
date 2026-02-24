@@ -9,8 +9,8 @@ export default function BonusSection({ data }: { data: CourseAIContent }) {
   const estimated = Math.round(price * 1.5);
 
   return (
-    <section className="bg-zinc-950 py-24">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="bg-zinc-950 py-16 md:py-24">
+      <div className="max-w-5xl mx-auto px-5">
 
         <div className="relative bg-zinc-900 border border-indigo-500/20 rounded-3xl overflow-hidden p-10 md:p-14">
 

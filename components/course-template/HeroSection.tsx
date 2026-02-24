@@ -7,7 +7,7 @@ export default function HeroSection({ data }: { data: CourseAIContent }) {
   const hasBonus  = !!data.bonus_section.description?.trim();
 
   return (
-    <section className="relative bg-zinc-950 overflow-hidden py-28 md:py-36">
+    <section className="relative bg-zinc-950 overflow-hidden py-20 md:py-36">
 
       {/* Ambient glow */}
       <div className="absolute inset-0 pointer-events-none">
@@ -15,11 +15,11 @@ export default function HeroSection({ data }: { data: CourseAIContent }) {
         <div className="absolute bottom-0 right-0 w-[400px] h-[300px] bg-violet-600/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-6 text-center">
+      <div className="relative max-w-4xl mx-auto px-5 text-center">
 
         {/* Badges */}
         {(isPremium || hasBonus) && (
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
+          <div className="flex flex-wrap justify-center gap-2 mb-7">
             {isPremium && (
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-3.5 py-1.5 rounded-full tracking-wide">
                 <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
@@ -44,27 +44,27 @@ export default function HeroSection({ data }: { data: CourseAIContent }) {
         )}
 
         {/* Main headline */}
-        <h1 className="text-4xl sm:text-5xl md:text-[3.5rem] font-bold text-white leading-[1.12] tracking-tight mb-6">
+        <h1 className="text-3xl sm:text-4xl md:text-[3.5rem] font-bold text-white leading-[1.12] tracking-tight mb-5 md:mb-6">
           {data.hero.headline}
         </h1>
 
         {/* Sub-headline */}
-        <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-12">
+        <p className="text-base md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-10 md:mb-12">
           {data.hero.subheadline}
         </p>
 
         {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
-          <button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-9 py-4 rounded-full text-sm transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/25">
-            {data.pricing_section.cta} — {data.pricing_section.price}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mb-12 md:mb-16">
+          <button className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-4 rounded-full text-sm transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/25">
+            {data.hero.cta} — {data.pricing_section.price}
           </button>
-          <button className="w-full sm:w-auto border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-medium px-7 py-4 rounded-full text-sm transition-all">
+          <button className="border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-medium px-7 py-4 rounded-full text-sm transition-all">
             Voir le programme
           </button>
         </div>
 
         {/* Social proof strip */}
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
           {[
             { n: "3 800+",    label: "étudiants" },
             { n: "4.9 / 5",   label: "note moyenne" },

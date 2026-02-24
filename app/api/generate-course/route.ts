@@ -10,23 +10,18 @@ const CourseWizardBodySchema = z.object({
   templateId:     z.string().default("course-pro"),
   title:          z.string().min(1),
   transformation: z.string().min(1),
-  audience:       z.string().min(1),
-  problem:        z.string().min(1),
   modules:        z.string().min(1),
   bonus:          z.string(),
   price:          z.string().min(1),
 });
 
-// ── Output validation schema (CourseAIContent) ────────────────────────────────
+// ── AI output validation schema ───────────────────────────────────────────────
 
 const CourseAIContentSchema = z.object({
   hero: z.object({
     headline:    z.string(),
     subheadline: z.string(),
-  }),
-  problem_section: z.object({
-    title:   z.string(),
-    bullets: z.array(z.string()),
+    cta:         z.string(),
   }),
   transformation_section: z.object({
     title:    z.string(),
@@ -49,14 +44,15 @@ const CourseAIContentSchema = z.object({
   pricing_section: z.object({
     headline:      z.string(),
     justification: z.string(),
-    price:         z.string(),
-    cta:           z.string(),
-    features:      z.array(z.string()),
   }),
   faq: z.array(z.object({
     question: z.string(),
     answer:   z.string(),
   })),
+  final_cta: z.object({
+    text:    z.string(),
+    subtext: z.string(),
+  }),
 });
 
 // ── JSON scaffold injected into the prompt ────────────────────────────────────
@@ -64,15 +60,8 @@ const CourseAIContentSchema = z.object({
 const COURSE_JSON_SCHEMA = `{
   "hero": {
     "headline": "headline puissante orientée résultat (max 12 mots, commence par un verbe fort ou chiffre précis)",
-    "subheadline": "1-2 phrases persuasives qui amplifient la transformation promise"
-  },
-  "problem_section": {
-    "title": "titre accrocheur pour la section problème (ex. Pourquoi tu stagnes encore ?)",
-    "bullets": [
-      "bullet problème 1 — formulé avec empathie, 1-2 phrases",
-      "bullet problème 2 — tentatives échouées ou ressources inefficaces",
-      "bullet problème 3 — conséquences si rien ne change"
-    ]
+    "subheadline": "1-2 phrases persuasives qui amplifient la transformation promise",
+    "cta": "texte du bouton principal (ex. Je commence maintenant · Accéder à la formation)"
   },
   "transformation_section": {
     "title": "vision de la transformation, 1 phrase forte (ex. Imagine enfin réussir à...)",
@@ -114,13 +103,13 @@ const COURSE_JSON_SCHEMA = `{
   ],
   "bonus_section": {
     "title": "Tout ce que tu reçois en plus",
-    "description": "2-3 phrases décrivant les bonus, accompagnement ou garantie inclus"
+    "description": "2-3 phrases décrivant les bonus, accompagnement ou garantie inclus. Laisse description vide si aucun bonus n'est spécifié."
   },
   "testimonials": [
     {
       "name": "Prénom N. — nom fictif mais réaliste",
       "quote": "témoignage spécifique avec résultat concret et métrique, 2-3 phrases",
-      "result": "rôle ou résultat obtenu (ex. Freelance Design · +3 500€/mois en 60 jours)"
+      "result": "rôle ou résultat obtenu (ex. Freelance Design · +3 500 €/mois en 60 jours)"
     },
     {
       "name": "string",
@@ -135,17 +124,7 @@ const COURSE_JSON_SCHEMA = `{
   ],
   "pricing_section": {
     "headline": "titre accrocheur pour la section tarif (ex. Investi dans ta transformation)",
-    "justification": "1-2 phrases qui justifient l'investissement ou formulent la garantie de remboursement",
-    "price": "PRICE_PLACEHOLDER",
-    "cta": "texte du bouton principal (ex. Je m'inscris maintenant)",
-    "features": [
-      "inclus 1 (ex. Accès à vie à toutes les leçons)",
-      "inclus 2 (ex. Mises à jour gratuites incluses)",
-      "inclus 3",
-      "inclus 4",
-      "inclus 5",
-      "inclus 6 — bonus ou garantie le cas échéant"
-    ]
+    "justification": "1 phrase qui justifie l'investissement ou formule la garantie de remboursement"
   },
   "faq": [
     {
@@ -168,7 +147,11 @@ const COURSE_JSON_SCHEMA = `{
       "question": "question sur le retour sur investissement ou les prérequis",
       "answer": "string"
     }
-  ]
+  ],
+  "final_cta": {
+    "text": "titre fort pour la section finale (ex. Prêt à changer ta vie ?)",
+    "subtext": "1-2 phrases de clôture qui créent l'urgence ou renforcent la confiance"
+  }
 }`;
 
 // ── Route handler ─────────────────────────────────────────────────────────────
@@ -185,16 +168,7 @@ export async function POST(req: Request): Promise<Response> {
       );
     }
 
-    const {
-      templateId,
-      title,
-      transformation,
-      audience,
-      problem,
-      modules,
-      bonus,
-      price,
-    } = parsed.data;
+    const { templateId, title, transformation, modules, bonus, price } = parsed.data;
 
     const selectedTemplate =
       templates.find((t) => t.id === templateId) ??
@@ -204,46 +178,31 @@ export async function POST(req: Request): Promise<Response> {
       return Response.json({ error: "Template not found" }, { status: 404 });
     }
 
-    // Inject the actual price into the JSON scaffold
-    const jsonSchemaWithPrice = COURSE_JSON_SCHEMA.replace("PRICE_PLACEHOLDER", price);
-
-    const userPrompt = `Tu es un expert en copywriting et en stratégie marketing spécialisé dans les formations en ligne.
+    const userPrompt = `Tu es un expert en copywriting et UX conversion pour formations en ligne.
 
 Un utilisateur a rempli un formulaire pour créer une landing page.
 
-Voici ses réponses brutes :
+Voici les réponses pertinentes :
 
 Titre : ${title}
 Transformation : ${transformation}
-Audience : ${audience}
-Problème : ${problem}
 Modules : ${modules}
 Bonus : ${bonus.trim() || "Aucun spécifié"}
 Prix : ${price}
 
 IMPORTANT :
-
-Les réponses peuvent être vagues, mal formulées ou répétitives.
-
-Ta mission :
-
-1. Comprendre l'intention réelle derrière chaque réponse.
-2. Reformuler professionnellement.
-3. Clarifier la promesse.
-4. Structurer une landing page cohérente.
-5. Supprimer toute phrase absurde ou maladroite.
-6. Adapter le ton à l'audience.
-7. Si le prix est élevé, renforcer la valeur perçue.
-8. Si l'audience est débutante, rassurer.
-9. Si l'audience est professionnelle, adopter un ton expert.
-10. Ne jamais copier les phrases brutes telles quelles.
-11. Toujours reformuler intelligemment.
+- Ignore complètement les problèmes et l'audience — ils ne figurent pas dans la structure.
+- Les réponses peuvent être vagues ou mal formulées.
+- Reformule et structure intelligemment.
+- Génère un texte cohérent et convaincant, orienté conversion.
+- Ne jamais copier les phrases brutes telles quelles.
+- Si le prix est élevé, renforcer la valeur perçue.
 
 Retourne STRICTEMENT un JSON valide sans texte autour, sans markdown, sans bloc de code.
 
 Format attendu :
 
-${jsonSchemaWithPrice}`;
+${COURSE_JSON_SCHEMA}`;
 
     const completion = await openai.chat.completions.create({
       model:       "gpt-4o-mini",
@@ -271,10 +230,19 @@ ${jsonSchemaWithPrice}`;
       );
     }
 
+    // Inject price from wizard (not AI-generated)
+    const content = {
+      ...validate.data,
+      pricing_section: {
+        ...validate.data.pricing_section,
+        price,
+      },
+    };
+
     return Response.json({
       mode:     "create",
       template: selectedTemplate,
-      content:  validate.data,
+      content,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";

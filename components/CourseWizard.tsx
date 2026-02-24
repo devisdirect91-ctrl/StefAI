@@ -34,22 +34,6 @@ const STEPS: Step[] = [
     multiline: true,
   },
   {
-    key: "audience",
-    question: "À qui s'adresse précisément cette formation ?",
-    placeholder:
-      "ex. Entrepreneurs et salariés qui veulent créer leurs propres visuels sans dépendre d'un graphiste",
-    hint: "Décris ton public cible aussi précisément que possible.",
-    multiline: true,
-  },
-  {
-    key: "problem",
-    question: "Quel problème principal résout-elle ?",
-    placeholder:
-      "ex. Perdre des heures sur Canva pour obtenir des résultats peu professionnels qui ne convertissent pas",
-    hint: "Le problème douloureux que tu résous — agite la douleur.",
-    multiline: true,
-  },
-  {
     key: "modules",
     question: "Quels sont les modules principaux ?",
     placeholder:
@@ -86,8 +70,6 @@ export default function CourseWizard({ onComplete, loading }: Props) {
   const [answers, setAnswers] = useState<CourseData>({
     title: "",
     transformation: "",
-    audience: "",
-    problem: "",
     modules: "",
     bonus: "",
     price: "",
