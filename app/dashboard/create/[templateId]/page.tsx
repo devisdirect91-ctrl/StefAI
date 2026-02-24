@@ -8,6 +8,7 @@ import LandingRenderer from "@/components/LandingRenderer";
 import GeneratingOverlay from "@/components/GeneratingOverlay";
 import ChatEditor from "@/components/ChatEditor";
 import StylePanel from "@/components/StylePanel";
+import CourseWizard, { type CourseAnswers } from "@/components/CourseWizard";
 import { styleToTheme, DEFAULT_SETTINGS } from "@/lib/landing";
 import type { LandingData, LandingTheme } from "@/types/landing";
 
@@ -55,6 +56,25 @@ export default function CreatePage() {
       content:  data.content,
       theme:    styleToTheme(data.template?.style),
       settings: { ...DEFAULT_SETTINGS, productName },
+    });
+    setLoading(false);
+  };
+
+  const handleGenerateFromWizard = async (answers: CourseAnswers) => {
+    setLoading(true);
+    setOverlayVisible(true);
+
+    const res  = await fetch("/api/generate-course", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ templateId: template.id, ...answers }),
+    });
+
+    const data = await res.json();
+    setLandingData({
+      content:  data.content,
+      theme:    styleToTheme(data.template?.style),
+      settings: { ...DEFAULT_SETTINGS, productName: answers.title },
     });
     setLoading(false);
   };
@@ -121,49 +141,53 @@ export default function CreatePage() {
 
         {/* FORM — before generation */}
         {!landingData && (
-          <div className="max-w-2xl">
-            <h2 className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-6">
-              Describe your product
-            </h2>
+          template.id === "course-pro" ? (
+            <CourseWizard onComplete={handleGenerateFromWizard} loading={loading} />
+          ) : (
+            <div className="max-w-2xl">
+              <h2 className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-6">
+                Describe your product
+              </h2>
 
-            <div className="space-y-5">
-              <div>
-                <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">
-                  Product Name
-                </label>
-                <input
-                  placeholder="e.g. Productivity Masterclass 2025"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors"
-                />
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">
+                    Product Name
+                  </label>
+                  <input
+                    placeholder="e.g. Productivity Masterclass 2025"
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    placeholder="Describe your product, target audience, key benefits, expected results..."
+                    rows={5}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors resize-none"
+                  />
+                </div>
+
+                <button
+                  onClick={handleGenerate}
+                  disabled={!canGenerate || loading}
+                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-medium text-sm transition-colors"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Generate My Page
+                </button>
               </div>
-
-              <div>
-                <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">
-                  Description
-                </label>
-                <textarea
-                  placeholder="Describe your product, target audience, key benefits, expected results..."
-                  rows={5}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-700 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors resize-none"
-                />
-              </div>
-
-              <button
-                onClick={handleGenerate}
-                disabled={!canGenerate || loading}
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-medium text-sm transition-colors"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Generate My Page
-              </button>
             </div>
-          </div>
+          )
         )}
 
         {/* PREVIEW + EDITOR — after generation */}
