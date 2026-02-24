@@ -10,11 +10,57 @@ import ChatEditor from "@/components/ChatEditor";
 import StylePanel from "@/components/StylePanel";
 import CourseWizard from "@/components/CourseWizard";
 import CourseLandingTemplate from "@/components/CourseLandingTemplate";
-import type { CourseData } from "@/components/CourseLandingTemplate";
+import type { CourseAIContent } from "@/components/CourseLandingTemplate";
+import type { CourseData } from "@/components/course-template/types";
+import type { CourseContent } from "@/types/landing";
 import { styleToTheme, DEFAULT_SETTINGS } from "@/lib/landing";
-import type { LandingData, LandingTheme } from "@/types/landing";
+import type { LandingData, LandingContent, LandingTheme } from "@/types/landing";
 
 type SidebarTab = "content" | "style";
+
+// ── Map AI content → legacy CourseContent for publishing ─────────────────────
+// (CourseRenderer used by the published site consumes CourseContent)
+
+function mapAIContentToCourseContent(ai: CourseAIContent): CourseContent {
+  return {
+    hero: {
+      title:        ai.hero.headline,
+      subtitle:     ai.hero.subheadline,
+      cta:          ai.pricing_section.cta,
+      secondaryCta: "Voir le programme",
+    },
+    stats: [
+      { value: String(ai.modules.length), label: "Modules" },
+      { value: "12h+",       label: "De contenu" },
+      { value: "Accès à vie", label: "Sans expiration" },
+      { value: "4.9 / 5",   label: "Note moyenne" },
+    ],
+    outcomes: ai.transformation_section.benefits,
+    modules: ai.modules.map((m) => ({
+      title:       m.title,
+      description: m.description,
+      lessons:     [m.outcome].filter(Boolean),
+    })),
+    instructor: {
+      name:        "Formateur Expert",
+      bio:         ai.transformation_section.title,
+      credentials: [],
+    },
+    testimonials: ai.testimonials.map((t) => ({
+      name: t.name,
+      role: t.result,
+      text: t.quote,
+    })),
+    pricing: {
+      price:     ai.pricing_section.price,
+      period:    "paiement unique",
+      features:  ai.pricing_section.features,
+      cta:       ai.pricing_section.cta,
+      guarantee: ai.pricing_section.justification,
+    },
+    faq: ai.faq,
+  };
+}
 
 // ── Preview chrome wrappers ──────────────────────────────────────────────────
 
@@ -67,12 +113,13 @@ export default function CreatePage() {
   const template = templates.find((t) => t.id === templateId);
 
   // Generic template state
-  const [productName, setProductName]       = useState("");
-  const [description, setDescription]       = useState("");
-  const [landingData, setLandingData]       = useState<LandingData | null>(null);
+  const [productName, setProductName] = useState("");
+  const [description, setDescription] = useState("");
+  const [landingData, setLandingData]  = useState<LandingData | null>(null);
 
-  // Course-pro wizard state — instant preview, no API call needed
-  const [coursePreview, setCoursePreview]   = useState<CourseData | null>(null);
+  // Course-pro state — AI-generated preview
+  const [coursePreview, setCoursePreview] = useState<CourseAIContent | null>(null);
+  const [courseTitle, setCourseTitle]     = useState<string>("");
   const [publishLoading, setPublishLoading] = useState(false);
 
   // Shared UI state
@@ -120,36 +167,44 @@ export default function CreatePage() {
     setLoading(false);
   };
 
-  /** Course wizard → instant preview (no API call) */
-  const handleGenerateFromWizard = (answers: CourseData) => {
-    setCoursePreview(answers);
+  /** Course wizard → AI interpretation → preview */
+  const handleGenerateFromWizard = async (answers: CourseData) => {
+    setCourseTitle(answers.title);
+    setLoading(true);
+    setOverlayVisible(true);
+
+    const res = await fetch("/api/generate-course", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ templateId: template.id, ...answers }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert((err as { error?: string }).error ?? "Generation failed. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    const data = await res.json();
+    setCoursePreview(data.content as CourseAIContent);
+    setLoading(false);
   };
 
-  /** Publish course: generate structured content via AI then save */
+  /** Publish course — map AI content → CourseContent then save */
   const handlePublishCourse = async () => {
     if (!coursePreview) return;
     setPublishLoading(true);
 
-    const genRes = await fetch("/api/generate-course", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ templateId: template.id, ...coursePreview }),
-    });
-
-    if (!genRes.ok) {
-      alert("Generation failed. Please try again.");
-      setPublishLoading(false);
-      return;
-    }
-
-    const genData   = await genRes.json();
     const publishPayload: LandingData = {
-      content:  genData.content,
-      theme:    styleToTheme(genData.template?.style),
-      settings: { ...DEFAULT_SETTINGS, productName: coursePreview.title },
+      // Cast needed because LandingContent only covers SaasContent at the type level,
+      // but CourseContent is handled at runtime by CourseRenderer.
+      content:  mapAIContentToCourseContent(coursePreview) as unknown as LandingContent,
+      theme:    styleToTheme("course-pro"),
+      settings: { ...DEFAULT_SETTINGS, productName: courseTitle },
     };
 
-    const pubRes = await fetch("/api/publish", {
+    const pubRes  = await fetch("/api/publish", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify(publishPayload),
@@ -192,9 +247,9 @@ export default function CreatePage() {
   const canGenerate = productName.trim() && description.trim();
 
   // ── Derived visibility ─────────────────────────────────────────────────────
-  const showWizard        = isCourseTemplate && !coursePreview;
-  const showCoursePreview = isCourseTemplate && !!coursePreview;
-  const showForm          = !isCourseTemplate && !landingData;
+  const showWizard         = isCourseTemplate && !coursePreview;
+  const showCoursePreview  = isCourseTemplate && !!coursePreview;
+  const showForm           = !isCourseTemplate && !landingData;
   const showLandingPreview = !isCourseTemplate && !!landingData;
 
   // ── Preview toolbar (shared) ───────────────────────────────────────────────
@@ -292,11 +347,11 @@ export default function CreatePage() {
 
         {/* ── COURSE: wizard ─────────────────────────────────────────────── */}
         {showWizard && (
-          <CourseWizard onComplete={handleGenerateFromWizard} loading={false} />
+          <CourseWizard onComplete={handleGenerateFromWizard} loading={loading} />
         )}
 
-        {/* ── COURSE: preview (instant, from wizard answers) ─────────────── */}
-        {showCoursePreview && (
+        {/* ── COURSE: AI-structured preview ──────────────────────────────── */}
+        {showCoursePreview && coursePreview && (
           <div>
             <PublishedBanner />
 

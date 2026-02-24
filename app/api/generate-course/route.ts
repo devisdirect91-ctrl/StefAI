@@ -17,111 +17,157 @@ const CourseWizardBodySchema = z.object({
   price:          z.string().min(1),
 });
 
-// ── Output validation schemas (mirror types/landing.ts CourseContent) ─────────
+// ── Output validation schema (CourseAIContent) ────────────────────────────────
 
-const CourseStatSchema = z.object({
-  value: z.string(),
-  label: z.string(),
-});
-
-const CourseModuleSchema = z.object({
-  title:       z.string(),
-  description: z.string(),
-  lessons:     z.array(z.string()),
-});
-
-const CourseTestimonialSchema = z.object({
-  name: z.string(),
-  role: z.string(),
-  text: z.string(),
-});
-
-const CourseContentSchema = z.object({
+const CourseAIContentSchema = z.object({
   hero: z.object({
-    title:        z.string(),
-    subtitle:     z.string(),
-    cta:          z.string(),
-    secondaryCta: z.string(),
+    headline:    z.string(),
+    subheadline: z.string(),
   }),
-  stats:    z.array(CourseStatSchema),
-  outcomes: z.array(z.string()),
-  modules:  z.array(CourseModuleSchema),
-  instructor: z.object({
-    name:        z.string(),
-    bio:         z.string(),
-    credentials: z.array(z.string()),
+  problem_section: z.object({
+    title:   z.string(),
+    bullets: z.array(z.string()),
   }),
-  testimonials: z.array(CourseTestimonialSchema),
-  pricing: z.object({
-    price:     z.string(),
-    period:    z.string(),
-    features:  z.array(z.string()),
-    cta:       z.string(),
-    guarantee: z.string(),
+  transformation_section: z.object({
+    title:    z.string(),
+    benefits: z.array(z.string()),
   }),
-  faq: z.array(z.object({ question: z.string(), answer: z.string() })),
+  modules: z.array(z.object({
+    title:       z.string(),
+    description: z.string(),
+    outcome:     z.string(),
+  })),
+  bonus_section: z.object({
+    title:       z.string(),
+    description: z.string(),
+  }),
+  testimonials: z.array(z.object({
+    name:   z.string(),
+    quote:  z.string(),
+    result: z.string(),
+  })),
+  pricing_section: z.object({
+    headline:      z.string(),
+    justification: z.string(),
+    price:         z.string(),
+    cta:           z.string(),
+    features:      z.array(z.string()),
+  }),
+  faq: z.array(z.object({
+    question: z.string(),
+    answer:   z.string(),
+  })),
 });
 
-// ── JSON shape scaffold injected into the prompt ──────────────────────────────
+// ── JSON scaffold injected into the prompt ────────────────────────────────────
 
 const COURSE_JSON_SCHEMA = `{
   "hero": {
-    "title": "string — headline puissante orientée transformation (max 10 mots)",
-    "subtitle": "string — 1-2 phrases persuasives qui amplifient la transformation promise",
-    "cta": "string — CTA principal (ex. S'inscrire maintenant, Accéder à la formation)",
-    "secondaryCta": "string — CTA secondaire (ex. Voir le programme, Aperçu gratuit)"
+    "headline": "headline puissante orientée résultat (max 12 mots, commence par un verbe fort ou chiffre précis)",
+    "subheadline": "1-2 phrases persuasives qui amplifient la transformation promise"
   },
-  "stats": [
-    { "value": "24",     "label": "Leçons vidéo" },
-    { "value": "6",      "label": "Modules" },
-    { "value": "12h+",   "label": "De contenu" },
-    { "value": "3 800+", "label": "Étudiants" }
-  ],
-  "outcomes": [
-    "string — résultat concret 1, commence par un verbe d'action",
-    "string", "string", "string", "string", "string"
-  ],
-  "modules": [
-    {
-      "title": "Module 1 – Titre descriptif",
-      "description": "string — 1 phrase sur ce que couvre ce module",
-      "lessons": ["string — titre de leçon", "string", "string", "string"]
-    },
-    { "title": "Module 2 – ...", "description": "string", "lessons": ["string", "string", "string"] },
-    { "title": "Module 3 – ...", "description": "string", "lessons": ["string", "string", "string", "string"] },
-    { "title": "Module 4 – ...", "description": "string", "lessons": ["string", "string", "string"] },
-    { "title": "Module 5 – ...", "description": "string", "lessons": ["string", "string", "string", "string"] }
-  ],
-  "instructor": {
-    "name": "string — nom complet du formateur",
-    "bio": "string — 2-3 phrases : background, expertise, résultats obtenus ou étudiants formés",
-    "credentials": [
-      "string — ex. '10+ ans d'expérience dans le domaine'",
-      "string — ex. '50 000+ étudiants formés'",
-      "string — ex. 'Expert reconnu, auteur, conférencier'"
+  "problem_section": {
+    "title": "titre accrocheur pour la section problème (ex. Pourquoi tu stagnes encore ?)",
+    "bullets": [
+      "bullet problème 1 — formulé avec empathie, 1-2 phrases",
+      "bullet problème 2 — tentatives échouées ou ressources inefficaces",
+      "bullet problème 3 — conséquences si rien ne change"
     ]
   },
-  "testimonials": [
-    { "name": "string", "role": "string — ex. 'Designer Freelance'", "text": "string — témoignage spécifique avec résultats concrets et métriques (2-3 phrases)" },
-    { "name": "string", "role": "string", "text": "string" },
-    { "name": "string", "role": "string", "text": "string" }
+  "transformation_section": {
+    "title": "vision de la transformation, 1 phrase forte (ex. Imagine enfin réussir à...)",
+    "benefits": [
+      "bénéfice concret 1 — commence par un verbe d'action",
+      "bénéfice concret 2",
+      "bénéfice concret 3",
+      "bénéfice concret 4",
+      "bénéfice concret 5",
+      "bénéfice concret 6"
+    ]
+  },
+  "modules": [
+    {
+      "title": "Module 1 – Titre descriptif du module",
+      "description": "1 phrase sur ce que couvre ce module",
+      "outcome": "résultat concret obtenu à la fin de ce module"
+    },
+    {
+      "title": "Module 2 – ...",
+      "description": "string",
+      "outcome": "string"
+    },
+    {
+      "title": "Module 3 – ...",
+      "description": "string",
+      "outcome": "string"
+    },
+    {
+      "title": "Module 4 – ...",
+      "description": "string",
+      "outcome": "string"
+    },
+    {
+      "title": "Module 5 – ...",
+      "description": "string",
+      "outcome": "string"
+    }
   ],
-  "pricing": {
-    "price": "string — prix exact fourni",
-    "period": "string — ex. 'paiement unique' ou '/ mois'",
+  "bonus_section": {
+    "title": "Tout ce que tu reçois en plus",
+    "description": "2-3 phrases décrivant les bonus, accompagnement ou garantie inclus"
+  },
+  "testimonials": [
+    {
+      "name": "Prénom N. — nom fictif mais réaliste",
+      "quote": "témoignage spécifique avec résultat concret et métrique, 2-3 phrases",
+      "result": "rôle ou résultat obtenu (ex. Freelance Design · +3 500€/mois en 60 jours)"
+    },
+    {
+      "name": "string",
+      "quote": "string",
+      "result": "string"
+    },
+    {
+      "name": "string",
+      "quote": "string",
+      "result": "string"
+    }
+  ],
+  "pricing_section": {
+    "headline": "titre accrocheur pour la section tarif (ex. Investi dans ta transformation)",
+    "justification": "1-2 phrases qui justifient l'investissement ou formulent la garantie de remboursement",
+    "price": "PRICE_PLACEHOLDER",
+    "cta": "texte du bouton principal (ex. Je m'inscris maintenant)",
     "features": [
-      "string — ex. 'Accès à vie à toutes les leçons'",
-      "string", "string", "string", "string", "string"
-    ],
-    "cta": "string — ex. Je m'inscris maintenant",
-    "guarantee": "string — ex. 'Satisfait ou remboursé 30 jours, sans condition'"
+      "inclus 1 (ex. Accès à vie à toutes les leçons)",
+      "inclus 2 (ex. Mises à jour gratuites incluses)",
+      "inclus 3",
+      "inclus 4",
+      "inclus 5",
+      "inclus 6 — bonus ou garantie le cas échéant"
+    ]
   },
   "faq": [
-    { "question": "string", "answer": "string — 2-4 phrases qui lèvent l'objection" },
-    { "question": "string", "answer": "string" },
-    { "question": "string", "answer": "string" },
-    { "question": "string", "answer": "string" },
-    { "question": "string", "answer": "string" }
+    {
+      "question": "Est-ce adapté aux débutants ?",
+      "answer": "réponse complète qui lève l'objection, 2-4 phrases"
+    },
+    {
+      "question": "Combien de temps faut-il consacrer par semaine ?",
+      "answer": "string"
+    },
+    {
+      "question": "Y a-t-il une garantie de remboursement ?",
+      "answer": "string"
+    },
+    {
+      "question": "Comment accéder à la formation après l'achat ?",
+      "answer": "string"
+    },
+    {
+      "question": "question sur le retour sur investissement ou les prérequis",
+      "answer": "string"
+    }
   ]
 }`;
 
@@ -158,37 +204,46 @@ export async function POST(req: Request): Promise<Response> {
       return Response.json({ error: "Template not found" }, { status: 404 });
     }
 
-    const userPrompt = `Tu es un expert copywriter spécialisé dans les landing pages de formation en ligne à haute conversion.
+    // Inject the actual price into the JSON scaffold
+    const jsonSchemaWithPrice = COURSE_JSON_SCHEMA.replace("PRICE_PLACEHOLDER", price);
 
-Voici les informations fournies par le créateur de la formation :
+    const userPrompt = `Tu es un expert en copywriting et en stratégie marketing spécialisé dans les formations en ligne.
 
-Nom de la formation : ${title}
-Transformation promise : ${transformation}
-Public cible : ${audience}
-Problème principal résolu : ${problem}
-Modules / programme : ${modules}
-Bonus, accompagnement, garantie : ${bonus.trim() || "Aucun spécifié"}
+Un utilisateur a rempli un formulaire pour créer une landing page.
+
+Voici ses réponses brutes :
+
+Titre : ${title}
+Transformation : ${transformation}
+Audience : ${audience}
+Problème : ${problem}
+Modules : ${modules}
+Bonus : ${bonus.trim() || "Aucun spécifié"}
 Prix : ${price}
 
+IMPORTANT :
+
+Les réponses peuvent être vagues, mal formulées ou répétitives.
+
 Ta mission :
-Génère une landing page complète et optimisée pour la conversion en suivant ces règles :
 
-- hero.title : headline puissante orientée transformation (max 10 mots, commence par un verbe fort ou chiffre précis)
-- hero.subtitle : 1-2 phrases persuasives qui amplifient exactement la transformation promise
-- stats : adapte les 4 statistiques au contexte réel de la formation (nb leçons, modules, heures de contenu, étudiants estimés)
-- outcomes : 6 résultats concrets et mesurables que l'élève obtiendra, chacun commençant par un verbe d'action (Créer, Maîtriser, Déployer, Générer, etc.)
-- modules : structure le programme fourni en 5 modules logiques (fondations → avancé), chaque module avec un titre descriptif, 1 phrase de description et 3-4 leçons détaillées
-- instructor : crée un formateur fictif mais ultra-crédible, avec un nom réaliste et des credentials directement liés au sujet de la formation
-- testimonials : 3 témoignages avec des résultats précis et crédibles (délais concrets, métriques, transformations mesurables)
-- pricing.price : utilise exactement "${price}"
-- pricing.features : liste les inclusions principales + tous les bonus mentionnés ci-dessus
-- pricing.guarantee : formule une garantie forte basée sur : ${bonus.trim() || "satisfait ou remboursé 30 jours"}
-- faq : 5 questions qui lèvent les 5 objections les plus courantes (niveau requis, durée, accès, remboursement, prérequis techniques)
+1. Comprendre l'intention réelle derrière chaque réponse.
+2. Reformuler professionnellement.
+3. Clarifier la promesse.
+4. Structurer une landing page cohérente.
+5. Supprimer toute phrase absurde ou maladroite.
+6. Adapter le ton à l'audience.
+7. Si le prix est élevé, renforcer la valeur perçue.
+8. Si l'audience est débutante, rassurer.
+9. Si l'audience est professionnelle, adopter un ton expert.
+10. Ne jamais copier les phrases brutes telles quelles.
+11. Toujours reformuler intelligemment.
 
-Style : clair, professionnel, orienté résultat, sans fluff, 100% conversion-focused.
+Retourne STRICTEMENT un JSON valide sans texte autour, sans markdown, sans bloc de code.
 
-Retourne UNIQUEMENT un objet JSON dans cette structure exacte — aucun markdown, aucune explication, aucun bloc de code :
-${COURSE_JSON_SCHEMA}`;
+Format attendu :
+
+${jsonSchemaWithPrice}`;
 
     const completion = await openai.chat.completions.create({
       model:       "gpt-4o-mini",
@@ -196,10 +251,19 @@ ${COURSE_JSON_SCHEMA}`;
       temperature: 0.8,
     });
 
-    const aiRaw    = completion.choices[0].message.content ?? "{}";
-    const aiParsed = JSON.parse(aiRaw);
+    const aiRaw = completion.choices[0].message.content ?? "{}";
 
-    const validate = CourseContentSchema.safeParse(aiParsed);
+    let aiParsed: unknown;
+    try {
+      aiParsed = JSON.parse(aiRaw);
+    } catch {
+      return Response.json(
+        { error: "AI returned invalid JSON", raw: aiRaw.slice(0, 300) },
+        { status: 502 },
+      );
+    }
+
+    const validate = CourseAIContentSchema.safeParse(aiParsed);
     if (!validate.success) {
       return Response.json(
         { error: "AI output failed schema validation", issues: validate.error.issues },

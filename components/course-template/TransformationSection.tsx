@@ -1,20 +1,6 @@
-import type { CourseData } from "./types";
+import type { CourseAIContent } from "./types";
 
-const EMOTIONAL_BENEFITS = [
-  "Retrouver confiance en tes compétences",
-  "Ne plus douter de toi à chaque étape",
-  "Être fier(e) des résultats que tu produis",
-];
-
-function buildRationalBenefits(transformation: string): string[] {
-  return [
-    transformation,
-    "Progresser de façon structurée et mesurable",
-    "Obtenir des résultats concrets dès les premières semaines",
-  ];
-}
-
-function CheckIcon({ color = "rgb(129 140 248)" }: { color?: string }) {
+function CheckIcon({ color = "rgb(52 211 153)" }: { color?: string }) {
   return (
     <svg
       className="shrink-0 mt-0.5"
@@ -27,8 +13,9 @@ function CheckIcon({ color = "rgb(129 140 248)" }: { color?: string }) {
   );
 }
 
-export default function TransformationSection({ data }: { data: CourseData }) {
-  const rational = buildRationalBenefits(data.transformation);
+export default function TransformationSection({ data }: { data: CourseAIContent }) {
+  // Use first 2 problem bullets for the "Avant" card
+  const beforeItems = data.problem_section.bullets.slice(0, 2);
 
   return (
     <section className="bg-zinc-950 py-24">
@@ -40,10 +27,7 @@ export default function TransformationSection({ data }: { data: CourseData }) {
             La transformation
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-white leading-snug max-w-3xl mx-auto">
-            Imagine si tu pouvais enfin{" "}
-            <span className="text-indigo-400">
-              {data.transformation.toLowerCase()}
-            </span>
+            {data.transformation_section.title}
           </h2>
         </div>
 
@@ -56,7 +40,11 @@ export default function TransformationSection({ data }: { data: CourseData }) {
                 Avant
               </span>
             </div>
-            <p className="text-zinc-400 text-sm leading-relaxed">{data.problem}</p>
+            <ul className="space-y-3">
+              {beforeItems.map((item, i) => (
+                <li key={i} className="text-zinc-400 text-sm leading-relaxed">{item}</li>
+              ))}
+            </ul>
           </div>
 
           <div className="bg-indigo-950/50 border border-indigo-500/25 rounded-2xl p-7">
@@ -67,45 +55,26 @@ export default function TransformationSection({ data }: { data: CourseData }) {
               </span>
             </div>
             <p className="text-zinc-100 text-sm leading-relaxed font-medium">
-              {data.transformation}
+              {data.transformation_section.title}
             </p>
           </div>
         </div>
 
-        {/* Benefits grid */}
-        <div className="grid md:grid-cols-2 gap-14 max-w-4xl mx-auto">
-
-          {/* Emotional */}
-          <div>
-            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-[0.2em] mb-6">
-              Ce que tu vas ressentir
-            </h3>
-            <ul className="space-y-4">
-              {EMOTIONAL_BENEFITS.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-zinc-300 text-sm leading-relaxed">
-                  <CheckIcon color="rgb(129 140 248)" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Rational */}
-          <div>
-            <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-[0.2em] mb-6">
-              Ce que tu vas accomplir
-            </h3>
-            <ul className="space-y-4">
-              {rational.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-zinc-300 text-sm leading-relaxed">
-                  <CheckIcon color="rgb(52 211 153)" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
+        {/* Benefits list */}
+        <div className="max-w-2xl mx-auto">
+          <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-[0.2em] mb-6 text-center">
+            Ce que tu vas accomplir
+          </h3>
+          <ul className="space-y-4">
+            {data.transformation_section.benefits.map((benefit, i) => (
+              <li key={i} className="flex items-start gap-3 text-zinc-300 text-sm leading-relaxed">
+                <CheckIcon />
+                {benefit}
+              </li>
+            ))}
+          </ul>
         </div>
+
       </div>
     </section>
   );

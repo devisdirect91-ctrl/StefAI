@@ -1,28 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import type { CourseData } from "./types";
-import type { ParsedModule } from "./types";
-import { parseModules } from "./utils";
+import type { CourseAIContent, CourseAIModule } from "./types";
 
 // ── Card layout (≤ 6 modules) ────────────────────────────────────────────────
 
-function ModuleCard({ mod }: { mod: ParsedModule }) {
+function ModuleCard({ mod, index }: { mod: CourseAIModule; index: number }) {
   return (
     <div className="group bg-zinc-950 border border-zinc-800 hover:border-indigo-500/30 rounded-2xl p-7 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/5">
       <div className="flex items-start gap-4">
         <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
           <span className="text-xs font-bold text-indigo-400 tabular-nums">
-            {String(mod.number).padStart(2, "0")}
+            {String(index).padStart(2, "0")}
           </span>
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-zinc-100 text-sm mb-2 group-hover:text-white transition-colors">
-            {mod.cleanTitle}
+            {mod.title}
           </h3>
-          <p className="text-xs text-zinc-500 leading-relaxed">
-            Concepts clés, exercices pratiques et résultats mesurables à la fin de ce module.
-          </p>
+          <p className="text-xs text-zinc-500 leading-relaxed">{mod.description}</p>
+          {mod.outcome && (
+            <p className="text-xs text-indigo-400/80 mt-2.5 leading-relaxed">
+              → {mod.outcome}
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -31,7 +32,7 @@ function ModuleCard({ mod }: { mod: ParsedModule }) {
 
 // ── Accordion layout (> 6 modules) ───────────────────────────────────────────
 
-function ModuleAccordion({ mod }: { mod: ParsedModule }) {
+function ModuleAccordion({ mod, index }: { mod: CourseAIModule; index: number }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -42,10 +43,10 @@ function ModuleAccordion({ mod }: { mod: ParsedModule }) {
       >
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-xs font-bold text-indigo-400 tabular-nums shrink-0">
-            {String(mod.number).padStart(2, "0")}
+            {String(index).padStart(2, "0")}
           </span>
           <span className="text-sm font-medium text-zinc-200 truncate">
-            {mod.cleanTitle}
+            {mod.title}
           </span>
         </div>
         <svg
@@ -59,9 +60,12 @@ function ModuleAccordion({ mod }: { mod: ParsedModule }) {
 
       {open && (
         <div className="px-6 py-4 bg-zinc-950 border-t border-zinc-800">
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            Concepts clés, exercices pratiques et résultats mesurables à la fin de ce module.
-          </p>
+          <p className="text-sm text-zinc-400 leading-relaxed">{mod.description}</p>
+          {mod.outcome && (
+            <p className="text-xs text-indigo-400/80 mt-3 leading-relaxed">
+              → {mod.outcome}
+            </p>
+          )}
         </div>
       )}
     </div>
@@ -70,8 +74,8 @@ function ModuleAccordion({ mod }: { mod: ParsedModule }) {
 
 // ── Main section ─────────────────────────────────────────────────────────────
 
-export default function ModulesSection({ data }: { data: CourseData }) {
-  const modules      = parseModules(data.modules);
+export default function ModulesSection({ data }: { data: CourseAIContent }) {
+  const modules      = data.modules;
   const useAccordion = modules.length > 6;
 
   return (
@@ -95,14 +99,14 @@ export default function ModulesSection({ data }: { data: CourseData }) {
         {/* Grid or Accordion */}
         {useAccordion ? (
           <div className="max-w-2xl mx-auto space-y-2">
-            {modules.map((mod) => (
-              <ModuleAccordion key={mod.number} mod={mod} />
+            {modules.map((mod, i) => (
+              <ModuleAccordion key={i} mod={mod} index={i + 1} />
             ))}
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
-            {modules.map((mod) => (
-              <ModuleCard key={mod.number} mod={mod} />
+            {modules.map((mod, i) => (
+              <ModuleCard key={i} mod={mod} index={i + 1} />
             ))}
           </div>
         )}

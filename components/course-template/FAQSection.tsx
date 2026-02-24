@@ -1,41 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { CourseData } from "./types";
-import { parsePrice, hasGuarantee } from "./utils";
+import type { CourseAIContent } from "./types";
 
-type FAQItem = { q: string; a: string };
-
-function buildFAQ(data: CourseData): FAQItem[] {
-  const audience   = data.audience.split(/,|qui\s|et\s/)[0].trim().toLowerCase();
-  const guarantee  = hasGuarantee(data.bonus);
-  const price      = parsePrice(data.price);
-
-  return [
-    {
-      q: "Est-ce adapté aux débutants ?",
-      a: `Cette formation a été conçue spécialement pour ${audience}. Que tu partes de zéro ou que tu aies déjà quelques bases, le programme est structuré progressivement — tu avanceras à ton propre rythme, sans jamais te sentir perdu(e).`,
-    },
-    {
-      q: "Combien de temps faut-il consacrer par semaine ?",
-      a: `Compte environ 1 à 2 heures par jour selon ton emploi du temps. La formation est pensée pour des personnes occupées : les modules sont courts, actionnables, et tu verras des résultats concrets dès les premières semaines.`,
-    },
-    {
-      q: guarantee ? "Quelle est la garantie de remboursement ?" : "Y a-t-il une politique de remboursement ?",
-      a: guarantee
-        ? `Oui. Si tu suis la formation et que tu n'obtiens pas de résultats, on te rembourse intégralement dans les 30 jours suivant ton achat — sans justification, sans question.`
-        : `Ta satisfaction est notre priorité. Si tu rencontres un problème dans les 14 jours suivant ton achat, contacte-nous et nous trouverons une solution.`,
-    },
-    {
-      q: "Comment accéder à la formation après l'achat ?",
-      a: `Dès ta commande validée, tu reçois immédiatement un email avec tes accès. La formation est 100 % en ligne, accessible sur ordinateur, tablette ou mobile, à n'importe quelle heure du jour ou de la nuit.`,
-    },
-    {
-      q: `Pourquoi investir ${data.price} dans cette formation ?`,
-      a: `Compare cet investissement au coût de ne rien changer : rester bloqué(e) des mois de plus, perdre du temps sur des ressources gratuites éparpillées, ou rater des opportunités. ${data.title} te permet de ${data.transformation.toLowerCase()}. Le retour sur investissement est immédiat et mesurable.`,
-    },
-  ];
-}
+type FAQItem = { question: string; answer: string };
 
 function FAQItem({ item }: { item: FAQItem }) {
   const [open, setOpen] = useState(false);
@@ -47,7 +15,7 @@ function FAQItem({ item }: { item: FAQItem }) {
         className="w-full flex items-center justify-between py-5 text-left gap-6"
       >
         <span className="text-sm font-medium text-zinc-200 leading-snug">
-          {item.q}
+          {item.question}
         </span>
         <div className={`shrink-0 w-6 h-6 rounded-full border transition-colors ${open ? "border-indigo-500 bg-indigo-500/10" : "border-zinc-700"} flex items-center justify-center`}>
           <svg
@@ -63,16 +31,14 @@ function FAQItem({ item }: { item: FAQItem }) {
       </button>
       {open && (
         <div className="pb-5">
-          <p className="text-sm text-zinc-400 leading-relaxed">{item.a}</p>
+          <p className="text-sm text-zinc-400 leading-relaxed">{item.answer}</p>
         </div>
       )}
     </div>
   );
 }
 
-export default function FAQSection({ data }: { data: CourseData }) {
-  const faq = buildFAQ(data);
-
+export default function FAQSection({ data }: { data: CourseAIContent }) {
   return (
     <section className="bg-zinc-900 py-24">
       <div className="max-w-2xl mx-auto px-6">
@@ -89,8 +55,8 @@ export default function FAQSection({ data }: { data: CourseData }) {
 
         {/* Accordion */}
         <div className="bg-zinc-950 border border-zinc-800 rounded-2xl px-7 divide-zinc-800">
-          {faq.map((item) => (
-            <FAQItem key={item.q} item={item} />
+          {data.faq.map((item) => (
+            <FAQItem key={item.question} item={item} />
           ))}
         </div>
 

@@ -1,13 +1,10 @@
-import type { CourseData } from "./types";
-import { parsePrice, truncate } from "./utils";
+import type { CourseAIContent } from "./types";
+import { parsePrice } from "./utils";
 
-export default function HeroSection({ data }: { data: CourseData }) {
-  const price     = parsePrice(data.price);
+export default function HeroSection({ data }: { data: CourseAIContent }) {
+  const price     = parsePrice(data.pricing_section.price);
   const isPremium = price > 200;
-  const hasBonus  = !!data.bonus?.trim();
-
-  const problemShort       = truncate(data.problem, 55);
-  const transformationShort = truncate(data.transformation, 65);
+  const hasBonus  = !!data.bonus_section.description?.trim();
 
   return (
     <section className="relative bg-zinc-950 overflow-hidden py-28 md:py-36">
@@ -48,30 +45,18 @@ export default function HeroSection({ data }: { data: CourseData }) {
 
         {/* Main headline */}
         <h1 className="text-4xl sm:text-5xl md:text-[3.5rem] font-bold text-white leading-[1.12] tracking-tight mb-6">
-          Passe de{" "}
-          <span className="text-zinc-400">{problemShort}</span>
-          {" "}à{" "}
-          <span className="relative">
-            <span className="text-white">{transformationShort}</span>
-            <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-indigo-500 rounded-full opacity-60" />
-          </span>
+          {data.hero.headline}
         </h1>
 
         {/* Sub-headline */}
-        <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-3">
-          La formation{" "}
-          <span className="text-zinc-200 font-semibold">{data.title}</span>{" "}
-          a été conçue spécialement pour{" "}
-          <span className="text-zinc-300">{data.audience}</span>.
-        </p>
-        <p className="text-sm text-zinc-600 mb-12">
-          Sans perdre des mois. Sans tutos éparpillés. Avec une méthode qui fonctionne.
+        <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed mb-12">
+          {data.hero.subheadline}
         </p>
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
           <button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-9 py-4 rounded-full text-sm transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/25">
-            Accéder à la formation — {data.price}
+            {data.pricing_section.cta} — {data.pricing_section.price}
           </button>
           <button className="w-full sm:w-auto border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-medium px-7 py-4 rounded-full text-sm transition-all">
             Voir le programme
@@ -81,9 +66,9 @@ export default function HeroSection({ data }: { data: CourseData }) {
         {/* Social proof strip */}
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
           {[
-            { n: "3 800+",      label: "étudiants" },
-            { n: "4.9 / 5",     label: "note moyenne" },
-            { n: "Accès vie",   label: "à vie après achat" },
+            { n: "3 800+",    label: "étudiants" },
+            { n: "4.9 / 5",   label: "note moyenne" },
+            { n: "Accès vie", label: "à vie après achat" },
           ].map(({ n, label }) => (
             <div key={label} className="flex items-center gap-1.5 text-sm text-zinc-500">
               <span className="font-semibold text-zinc-300">{n}</span>

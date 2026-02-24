@@ -1,13 +1,12 @@
-import type { CourseData } from "./types";
-import { parseBonus, parsePrice } from "./utils";
+import type { CourseAIContent } from "./types";
+import { parsePrice } from "./utils";
 
-export default function BonusSection({ data }: { data: CourseData }) {
-  const bonuses    = parseBonus(data.bonus);
-  const price      = parsePrice(data.price);
-  const isHighEnd  = price > 300;
-  const estimated  = Math.round(price * 1.5);
+export default function BonusSection({ data }: { data: CourseAIContent }) {
+  if (!data.bonus_section.description?.trim()) return null;
 
-  if (!bonuses.length) return null;
+  const price     = parsePrice(data.pricing_section.price);
+  const isHighEnd = price > 300;
+  const estimated = Math.round(price * 1.5);
 
   return (
     <section className="bg-zinc-950 py-24">
@@ -19,13 +18,13 @@ export default function BonusSection({ data }: { data: CourseData }) {
           <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
 
           {/* Header row */}
-          <div className="relative flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-12">
+          <div className="relative flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8">
             <div>
               <p className="text-xs font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-3">
                 Inclus dans la formation
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-white">
-                Tout ce que tu reçois
+                {data.bonus_section.title}
               </h2>
             </div>
 
@@ -34,32 +33,16 @@ export default function BonusSection({ data }: { data: CourseData }) {
                 <p className="text-xs text-zinc-500 mb-1">Valeur estimée</p>
                 <p className="text-3xl font-bold text-white">{estimated} €</p>
                 <p className="text-xs text-emerald-400 mt-2 font-medium">
-                  Ton investissement : {data.price}
+                  Ton investissement : {data.pricing_section.price}
                 </p>
               </div>
             )}
           </div>
 
-          {/* Bonus items grid */}
-          <div className="relative grid md:grid-cols-2 gap-3">
-            {bonuses.map((bonus, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-4 bg-zinc-950/60 border border-zinc-800 rounded-xl p-5"
-              >
-                <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center shrink-0 mt-0.5">
-                  <svg
-                    width="13" height="13" viewBox="0 0 24 24"
-                    fill="none" stroke="rgb(129 140 248)"
-                    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <p className="text-sm text-zinc-300 leading-snug">{bonus}</p>
-              </div>
-            ))}
-          </div>
+          {/* Description */}
+          <p className="relative text-zinc-300 text-sm leading-relaxed max-w-2xl">
+            {data.bonus_section.description}
+          </p>
 
         </div>
       </div>
