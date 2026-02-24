@@ -55,9 +55,28 @@ const CourseAIContentSchema = z.object({
   }),
 });
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+/** Parse free-text module list into an array of raw titles (one per non-empty line). */
+function parseModuleTitles(raw: string): string[] {
+  return raw
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+}
+
+/** Build the modules scaffold with exactly N entries matching the user's titles. */
+function buildModulesScaffold(titles: string[]): string {
+  const entries = titles.map((title, i) =>
+    `    {\n      "title": "${title.replace(/"/g, "'")}",\n      "description": "1 phrase sur ce que couvre ce module",\n      "outcome": "résultat concret obtenu à la fin de ce module"\n    }`,
+  );
+  return `  "modules": [\n${entries.join(",\n")}\n  ]`;
+}
+
 // ── JSON scaffold injected into the prompt ────────────────────────────────────
 
-const COURSE_JSON_SCHEMA = `{
+function buildCourseJsonSchema(moduleTitles: string[]): string {
+  return `{
   "hero": {
     "headline": "headline puissante orientée résultat (max 12 mots, commence par un verbe fort ou chiffre précis)",
     "subheadline": "1-2 phrases persuasives qui amplifient la transformation promise",
@@ -74,33 +93,7 @@ const COURSE_JSON_SCHEMA = `{
       "bénéfice concret 6"
     ]
   },
-  "modules": [
-    {
-      "title": "Module 1 – Titre descriptif du module",
-      "description": "1 phrase sur ce que couvre ce module",
-      "outcome": "résultat concret obtenu à la fin de ce module"
-    },
-    {
-      "title": "Module 2 – ...",
-      "description": "string",
-      "outcome": "string"
-    },
-    {
-      "title": "Module 3 – ...",
-      "description": "string",
-      "outcome": "string"
-    },
-    {
-      "title": "Module 4 – ...",
-      "description": "string",
-      "outcome": "string"
-    },
-    {
-      "title": "Module 5 – ...",
-      "description": "string",
-      "outcome": "string"
-    }
-  ],
+${buildModulesScaffold(moduleTitles)},
   "bonus_section": {
     "title": "Tout ce que tu reçois en plus",
     "description": "2-3 phrases décrivant les bonus, accompagnement ou garantie inclus. Laisse description vide si aucun bonus n'est spécifié."
@@ -152,7 +145,7 @@ const COURSE_JSON_SCHEMA = `{
     "text": "titre fort pour la section finale (ex. Prêt à changer ta vie ?)",
     "subtext": "1-2 phrases de clôture qui créent l'urgence ou renforcent la confiance"
   }
-}`;
+}`;}
 
 // ── Route handler ─────────────────────────────────────────────────────────────
 
@@ -178,6 +171,10 @@ export async function POST(req: Request): Promise<Response> {
       return Response.json({ error: "Template not found" }, { status: 404 });
     }
 
+    const moduleTitles   = parseModuleTitles(modules);
+    const moduleCount    = moduleTitles.length;
+    const jsonSchema     = buildCourseJsonSchema(moduleTitles);
+
     const userPrompt = `Tu es un expert en copywriting et UX conversion pour formations en ligne.
 
 Un utilisateur a rempli un formulaire pour créer une landing page.
@@ -197,12 +194,13 @@ IMPORTANT :
 - Génère un texte cohérent et convaincant, orienté conversion.
 - Ne jamais copier les phrases brutes telles quelles.
 - Si le prix est élevé, renforcer la valeur perçue.
+- Le tableau "modules" doit contenir EXACTEMENT ${moduleCount} entrée${moduleCount > 1 ? "s" : ""}, une par module listé ci-dessus. Respecte l'ordre et utilise les titres fournis comme base.
 
 Retourne STRICTEMENT un JSON valide sans texte autour, sans markdown, sans bloc de code.
 
 Format attendu :
 
-${COURSE_JSON_SCHEMA}`;
+${jsonSchema}`;
 
     const completion = await openai.chat.completions.create({
       model:       "gpt-4o-mini",
