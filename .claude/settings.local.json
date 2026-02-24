@@ -8,7 +8,14 @@
       "Bash(head:*)",
       "Bash(cd /c/Users/stefs/landing-saas && npx tsc --noEmit 2>&1)",
       "Bash(test:*)",
-      "Bash(cd /c/Users/stefs/landing-saas && npm install stripe 2>&1)"
+      "Bash(cd /c/Users/stefs/landing-saas && npm install stripe 2>&1)",
+      "Bash(cd:*)",
+      "Bash(cd /c/Users/stefs/landing-saas && npm run dev 2>&1)",
+      "Bash(taskkill:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "mcp__ide__getDiagnostics"
     ]
   }
 }

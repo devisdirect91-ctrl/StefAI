@@ -5,11 +5,11 @@ export default function PricingSection({ data }: { data: CourseAIContent }) {
   const cta = data.hero.cta;
 
   return (
-    <section className="bg-zinc-950 py-14 md:py-24">
+    <section className="bg-zinc-950 py-8 md:py-14">
       <div className="max-w-sm mx-auto px-5">
 
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <p className="text-[11px] font-semibold text-indigo-400 uppercase tracking-[0.2em] mb-3">
             Tarif
           </p>
@@ -31,8 +31,11 @@ export default function PricingSection({ data }: { data: CourseAIContent }) {
 
           {/* CTA */}
           <div className="px-6 py-6">
-            <button className="w-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold py-[14px] rounded-xl text-[0.92rem] transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/20">
-              {cta} — {ps.price}
+            <button className="group w-full inline-flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold tracking-widest uppercase py-[14px] rounded-xl text-xs transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/25">
+              Accéder à la formation
+              <svg className="transition-transform group-hover:translate-x-0.5" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
             </button>
 
             {ps.justification && (

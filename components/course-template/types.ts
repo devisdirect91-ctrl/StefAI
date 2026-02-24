@@ -4,7 +4,6 @@ export type CourseData = {
   title: string;
   transformation: string;
   modules: string;
-  bonus?: string;
   price: string;
 };
 

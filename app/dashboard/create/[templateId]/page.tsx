@@ -120,6 +120,7 @@ export default function CreatePage() {
   // Course-pro state — AI-generated preview
   const [coursePreview, setCoursePreview] = useState<CourseAIContent | null>(null);
   const [courseTitle, setCourseTitle]     = useState<string>("");
+  const [courseTheme, setCourseTheme]     = useState(() => styleToTheme("course-pro"));
   const [publishLoading, setPublishLoading] = useState(false);
 
   // Shared UI state
@@ -389,17 +390,60 @@ export default function CreatePage() {
               </div>
             </div>
 
-            {/* Preview — full width, no sidebar */}
-            {previewMode === "desktop" && (
-              <DesktopChrome>
-                <CourseLandingTemplate data={coursePreview} />
-              </DesktopChrome>
-            )}
-            {previewMode === "mobile" && (
-              <MobileChrome>
-                <CourseLandingTemplate data={coursePreview} />
-              </MobileChrome>
-            )}
+            {/* Preview + Sidebar */}
+            <div className="flex gap-5 items-start">
+
+              {/* Live preview */}
+              <div className="flex-1 min-w-0">
+                {previewMode === "desktop" && (
+                  <DesktopChrome>
+                    <CourseLandingTemplate data={coursePreview} theme={courseTheme} />
+                  </DesktopChrome>
+                )}
+                {previewMode === "mobile" && (
+                  <MobileChrome>
+                    <CourseLandingTemplate data={coursePreview} theme={courseTheme} />
+                  </MobileChrome>
+                )}
+              </div>
+
+              {/* Right sidebar — Content + Style */}
+              <div className="w-80 shrink-0 sticky top-6">
+                <div className="flex border-b border-zinc-800 bg-zinc-900 rounded-t-2xl">
+                  {([
+                    { id: "content", label: "Content" },
+                    { id: "style",   label: "Style" },
+                  ] as { id: SidebarTab; label: string }[]).map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setSidebarTab(tab.id)}
+                      className={`flex-1 py-3 text-xs font-medium transition-all border-b-2 -mb-px ${
+                        sidebarTab === tab.id
+                          ? "text-zinc-100 border-indigo-500"
+                          : "text-zinc-500 border-transparent hover:text-zinc-300"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+                <div>
+                  {sidebarTab === "content" && (
+                    <ChatEditor
+                      content={coursePreview}
+                      onContentChange={(c) => setCoursePreview(c as CourseAIContent)}
+                    />
+                  )}
+                  {sidebarTab === "style" && (
+                    <StylePanel
+                      theme={courseTheme}
+                      onChange={setCourseTheme}
+                    />
+                  )}
+                </div>
+              </div>
+
+            </div>
           </div>
         )}
 

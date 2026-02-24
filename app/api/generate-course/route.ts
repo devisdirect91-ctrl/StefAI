@@ -11,7 +11,7 @@ const CourseWizardBodySchema = z.object({
   title:          z.string().min(1),
   transformation: z.string().min(1),
   modules:        z.string().min(1),
-  bonus:          z.string(),
+  bonus:          z.string().optional().default(""),
   price:          z.string().min(1),
 });
 
@@ -54,6 +54,19 @@ const CourseAIContentSchema = z.object({
     subtext: z.string(),
   }),
 });
+
+// ── Currency normalizer ───────────────────────────────────────────────────────
+
+function normalizeCurrency(price: string): string {
+  return price
+    .replace(/\b(euros?|EUR)\b/gi, "€")
+    .replace(/\b(dollars?\s*(?:us|américains?)?|USD)\b/gi, "$")
+    .replace(/\b(pounds?|livres?\s*sterlings?|GBP)\b/gi, "£")
+    .replace(/\b(yens?|JPY)\b/gi, "¥")
+    .replace(/\b(francs?\s*suisses?|CHF)\b/gi, "CHF")
+    .replace(/\b(couronnes?\s*suédoises?|SEK)\b/gi, "kr")
+    .trim();
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -161,7 +174,7 @@ export async function POST(req: Request): Promise<Response> {
       );
     }
 
-    const { templateId, title, transformation, modules, bonus, price } = parsed.data;
+    const { templateId, title, transformation, modules, price } = parsed.data;
 
     const selectedTemplate =
       templates.find((t) => t.id === templateId) ??
@@ -184,7 +197,6 @@ Voici les réponses pertinentes :
 Titre : ${title}
 Transformation : ${transformation}
 Modules : ${modules}
-Bonus : ${bonus.trim() || "Aucun spécifié"}
 Prix : ${price}
 
 IMPORTANT :
@@ -233,7 +245,7 @@ ${jsonSchema}`;
       ...validate.data,
       pricing_section: {
         ...validate.data.pricing_section,
-        price,
+        price: normalizeCurrency(price),
       },
     };
 

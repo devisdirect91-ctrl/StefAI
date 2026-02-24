@@ -42,15 +42,6 @@ const STEPS: Step[] = [
     multiline: true,
   },
   {
-    key: "bonus",
-    question: "Y a-t-il un bonus, accompagnement ou garantie ?",
-    placeholder:
-      "ex. Accès à vie, communauté Discord privée, sessions Q&A live, garantie 30 jours satisfait ou remboursé",
-    hint: "Ce qui renforce la valeur de l'offre. Laisse vide si aucun.",
-    multiline: true,
-    optional: true,
-  },
-  {
     key: "price",
     question: "Quel est le prix de la formation ?",
     placeholder: "ex. 297 € ou 3 × 99 €",
@@ -71,7 +62,6 @@ export default function CourseWizard({ onComplete, loading }: Props) {
     title: "",
     transformation: "",
     modules: "",
-    bonus: "",
     price: "",
   });
 

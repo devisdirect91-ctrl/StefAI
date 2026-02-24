@@ -4,10 +4,10 @@ export default function TransformationSection({ data }: { data: CourseAIContent 
   const { title, benefits } = data.transformation_section;
 
   return (
-    <section className="bg-zinc-900 py-12 md:py-20">
+    <section className="bg-zinc-900 py-8 md:py-14">
       <div className="max-w-2xl mx-auto px-5">
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-3">
             La transformation
           </p>
