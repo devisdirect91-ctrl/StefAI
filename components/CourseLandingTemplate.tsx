@@ -24,20 +24,20 @@ const PALETTE_VARS: Record<string, Record<string, string>> = {
   custom:  {},
 };
 
-export default function CourseLandingTemplate({ data, theme }: { data: CourseAIContent; theme?: LandingTheme }) {
+export default function CourseLandingTemplate({ data, theme, courseId }: { data: CourseAIContent; theme?: LandingTheme; courseId?: string }) {
   const paletteVars = theme ? (PALETTE_VARS[theme.palette] ?? {}) : {};
   const fontClass   = theme?.fontStyle === "serif" ? "font-serif" : theme?.fontStyle === "mono" ? "font-mono" : "";
 
   return (
     <div className={`antialiased ${fontClass}`} style={paletteVars as React.CSSProperties}>
-      <StickyBundle          data={data} />
+      <StickyBundle          data={data} courseId={courseId} />
       <HeroSection           data={data} />
       <TransformationSection data={data} />
       <ModulesSection        data={data} />
       <TestimonialsSection   data={data} />
-      <PricingSection        data={data} />
+      <PricingSection        data={data} courseId={courseId} />
       <FAQSection            data={data} />
-      <FinalCTASection       data={data} />
+      <FinalCTASection       data={data} courseId={courseId} />
     </div>
   );
 }

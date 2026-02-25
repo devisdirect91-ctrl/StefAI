@@ -1,9 +1,29 @@
+"use client";
+
+import { useState } from "react";
 import type { CourseAIContent } from "./types";
 
-export default function FinalCTASection({ data }: { data: CourseAIContent }) {
+export default function FinalCTASection({ data, courseId }: { data: CourseAIContent; courseId?: string }) {
   const cta  = data.hero.cta;
   const ps   = data.pricing_section;
   const fcta = data.final_cta;
+  const [loading, setLoading] = useState(false);
+
+  async function handleBuy() {
+    if (!courseId || loading) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId }),
+      });
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <section className="bg-zinc-900 py-8 md:py-12 relative overflow-hidden">
@@ -31,8 +51,8 @@ export default function FinalCTASection({ data }: { data: CourseAIContent }) {
         </p>
 
         {/* CTA — full-width on mobile */}
-        <button className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold tracking-widest uppercase px-10 py-4 md:py-5 rounded-2xl text-xs transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/25">
-          Accéder à la formation
+        <button onClick={handleBuy} disabled={loading} className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold tracking-widest uppercase px-10 py-4 md:py-5 rounded-2xl text-xs transition-all hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/25 disabled:opacity-70">
+          {loading ? "Chargement…" : "Accéder à la formation"}
           <svg className="transition-transform group-hover:translate-x-0.5" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>

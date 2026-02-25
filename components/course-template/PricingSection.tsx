@@ -1,8 +1,28 @@
+"use client";
+
+import { useState } from "react";
 import type { CourseAIContent } from "./types";
 
-export default function PricingSection({ data }: { data: CourseAIContent }) {
+export default function PricingSection({ data, courseId }: { data: CourseAIContent; courseId?: string }) {
   const ps  = data.pricing_section;
   const cta = data.hero.cta;
+  const [loading, setLoading] = useState(false);
+
+  async function handleBuy() {
+    if (!courseId || loading) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId }),
+      });
+      const { url } = await res.json();
+      if (url) window.location.href = url;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <section className="bg-zinc-950 py-6 md:py-10">
@@ -31,8 +51,8 @@ export default function PricingSection({ data }: { data: CourseAIContent }) {
 
           {/* CTA */}
           <div className="px-6 py-6">
-            <button className="group w-full inline-flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold tracking-widest uppercase py-[14px] rounded-xl text-xs transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/25">
-              Accéder à la formation
+            <button onClick={handleBuy} disabled={loading} className="group w-full inline-flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold tracking-widest uppercase py-[14px] rounded-xl text-xs transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-500/25 disabled:opacity-70">
+              {loading ? "Chargement…" : "Accéder à la formation"}
               <svg className="transition-transform group-hover:translate-x-0.5" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>

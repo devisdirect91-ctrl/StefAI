@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import LandingRenderer from "@/components/LandingRenderer";
 import CourseLandingTemplate from "@/components/CourseLandingTemplate";
 import type { CourseAIContent } from "@/components/CourseLandingTemplate";
+import TrackView from "@/components/course-template/TrackView";
 import { styleToTheme, DEFAULT_SETTINGS } from "@/lib/landing";
 import type { LandingData, LandingTheme, LandingSettings } from "@/types/landing";
 
@@ -40,7 +41,12 @@ export default async function PublicSite({
     typeof (content.hero as Record<string, unknown>).headline === "string";
 
   if (isCourseAI) {
-    return <CourseLandingTemplate data={content as unknown as CourseAIContent} theme={theme} />;
+    return (
+      <>
+        <TrackView courseId={id} />
+        <CourseLandingTemplate data={content as unknown as CourseAIContent} theme={theme} courseId={id} />
+      </>
+    );
   }
 
   const landingData: LandingData = {

@@ -13,6 +13,7 @@ type Site = {
   created_at: string;
 };
 
+
 const IconExternalLink = () => (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
@@ -24,7 +25,6 @@ export default function DashboardHome() {
   const [sites, setSites] = useState<Site[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     Promise.all([
       supabase

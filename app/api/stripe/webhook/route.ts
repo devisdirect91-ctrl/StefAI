@@ -123,6 +123,21 @@ export async function POST(req: NextRequest) {
       } else {
         console.log(`[Stripe Webhook] ✓ Session ${session.id} saved to payments table`);
       }
+
+      if (session.metadata?.courseId) {
+        const { error: saleError } = await admin.from("course_sales").insert({
+          course_id:         session.metadata.courseId,
+          user_id:           session.metadata.userId || null,
+          stripe_session_id: session.id,
+          amount:            session.amount_total ?? 0,
+          currency:          session.currency ?? "eur",
+        });
+        if (saleError) {
+          console.error(`[Stripe Webhook] ✗ Failed to save course_sale for session ${session.id}:`, saleError);
+        } else {
+          console.log(`[Stripe Webhook] ✓ course_sales row inserted for course ${session.metadata.courseId}`);
+        }
+      }
       break;
     }
 
