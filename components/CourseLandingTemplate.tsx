@@ -6,6 +6,7 @@ import ModulesSection        from "./course-template/ModulesSection";
 import TestimonialsSection   from "./course-template/TestimonialsSection";
 import PricingSection        from "./course-template/PricingSection";
 import FAQSection            from "./course-template/FAQSection";
+import StickyBundle          from "./course-template/StickyBundle";
 import FinalCTASection       from "./course-template/FinalCTASection";
 
 export type { CourseAIContent };
@@ -29,6 +30,7 @@ export default function CourseLandingTemplate({ data, theme }: { data: CourseAIC
 
   return (
     <div className={`antialiased ${fontClass}`} style={paletteVars as React.CSSProperties}>
+      <StickyBundle          data={data} />
       <HeroSection           data={data} />
       <TransformationSection data={data} />
       <ModulesSection        data={data} />

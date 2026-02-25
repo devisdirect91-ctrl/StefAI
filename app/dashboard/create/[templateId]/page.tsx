@@ -28,6 +28,7 @@ function mapAIContentToCourseContent(ai: CourseAIContent): CourseContent {
       subtitle:     ai.hero.subheadline,
       cta:          ai.hero.cta,
       secondaryCta: "Voir le programme",
+      cover_image:  ai.hero.cover_image,
     },
     stats: [
       { value: String(ai.modules.length), label: "Modules" },
@@ -188,20 +189,23 @@ export default function CreatePage() {
     }
 
     const data = await res.json();
-    setCoursePreview(data.content as CourseAIContent);
+    const aiContent = data.content as CourseAIContent;
+    // Inject cover image client-side — not sent to AI to avoid large payloads
+    if (answers.coverImage) {
+      aiContent.hero = { ...aiContent.hero, cover_image: answers.coverImage };
+    }
+    setCoursePreview(aiContent);
     setLoading(false);
   };
 
-  /** Publish course — map AI content → CourseContent then save */
+  /** Publish course — store CourseAIContent directly so the site renders with CourseLandingTemplate */
   const handlePublishCourse = async () => {
     if (!coursePreview) return;
     setPublishLoading(true);
 
     const publishPayload: LandingData = {
-      // Cast needed because LandingContent only covers SaasContent at the type level,
-      // but CourseContent is handled at runtime by CourseRenderer.
-      content:  mapAIContentToCourseContent(coursePreview) as unknown as LandingContent,
-      theme:    styleToTheme("course-pro"),
+      content:  coursePreview as unknown as LandingContent,
+      theme:    courseTheme,
       settings: { ...DEFAULT_SETTINGS, productName: courseTitle },
     };
 

@@ -5,6 +5,7 @@ export type CourseData = {
   transformation: string;
   modules: string;
   price: string;
+  coverImage?: string; // base64 data URL, injected client-side
 };
 
 // ── AI-structured content (consumed by CourseLandingTemplate) ─────────────────
@@ -26,6 +27,7 @@ export type CourseAIContent = {
     headline: string;
     subheadline: string;
     cta: string;
+    cover_image?: string; // injected client-side after generation, not AI-generated
   };
   transformation_section: {
     title: string;

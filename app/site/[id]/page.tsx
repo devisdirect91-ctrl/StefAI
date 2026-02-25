@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import LandingRenderer from "@/components/LandingRenderer";
+import CourseLandingTemplate from "@/components/CourseLandingTemplate";
+import type { CourseAIContent } from "@/components/CourseLandingTemplate";
 import { styleToTheme, DEFAULT_SETTINGS } from "@/lib/landing";
 import type { LandingData, LandingTheme, LandingSettings } from "@/types/landing";
 
@@ -29,9 +31,21 @@ export default async function PublicSite({
     );
   }
 
+  const theme  = (data.theme as LandingTheme) ?? styleToTheme(data.style);
+  const content = data.content as Record<string, unknown>;
+
+  // CourseAIContent is identified by hero.headline (vs legacy CourseContent which uses hero.title)
+  const isCourseAI =
+    content?.hero != null &&
+    typeof (content.hero as Record<string, unknown>).headline === "string";
+
+  if (isCourseAI) {
+    return <CourseLandingTemplate data={content as unknown as CourseAIContent} theme={theme} />;
+  }
+
   const landingData: LandingData = {
     content:  data.content,
-    theme:    (data.theme as LandingTheme)    ?? styleToTheme(data.style),
+    theme,
     settings: (data.settings as LandingSettings) ?? DEFAULT_SETTINGS,
   };
 

@@ -5,7 +5,7 @@ export default function PricingSection({ data }: { data: CourseAIContent }) {
   const cta = data.hero.cta;
 
   return (
-    <section className="bg-zinc-950 py-8 md:py-14">
+    <section className="bg-zinc-950 py-6 md:py-10">
       <div className="max-w-sm mx-auto px-5">
 
         {/* Header */}

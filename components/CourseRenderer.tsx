@@ -199,6 +199,7 @@ export default function CourseRenderer({ content, isMobile, theme }: Props) {
     subtitle:     str(heroRaw, "subtitle"),
     cta:          str(heroRaw, "cta", "Enroll Now"),
     secondaryCta: str(heroRaw, "secondaryCta", "Preview Course"),
+    cover_image:  str(heroRaw, "cover_image"),
   };
 
   const stats        = arr<Record<string, unknown>>(content, "stats");
@@ -325,6 +326,19 @@ export default function CourseRenderer({ content, isMobile, theme }: Props) {
           <p className="mt-8 text-slate-600 text-xs">
             Lifetime access · Certificate of completion · 30-day money-back guarantee
           </p>
+
+          {/* Cover image */}
+          {hero.cover_image && (
+            <div className="mt-12">
+              <img
+                src={hero.cover_image}
+                alt="Illustration de la formation"
+                className={`mx-auto w-full object-cover rounded-2xl border border-white/10 shadow-2xl ${
+                  isMobile ? "max-w-xs" : "max-w-lg"
+                }`}
+              />
+            </div>
+          )}
         </div>
       </section>
 

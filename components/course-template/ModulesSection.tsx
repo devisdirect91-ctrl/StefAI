@@ -60,7 +60,7 @@ export default function ModulesSection({ data }: { data: CourseAIContent }) {
   const modules = data.modules;
 
   return (
-    <section className="bg-zinc-950 py-8 md:py-14">
+    <section className="bg-zinc-950 py-6 md:py-10">
       <div className="max-w-4xl mx-auto px-5">
 
         <div className="text-center mb-6">

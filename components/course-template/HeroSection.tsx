@@ -1,12 +1,16 @@
 import type { CourseAIContent } from "./types";
-import { parsePrice } from "./utils";
 
 export default function HeroSection({ data }: { data: CourseAIContent }) {
-  const price     = parsePrice(data.pricing_section.price);
-  const isPremium = price > 200;
+  const coverImage = data.hero.cover_image;
+
+  const socialProofItems = [
+    { n: "3 800+", label: "étudiants" },
+    { n: "4.9 / 5", label: "satisfaction" },
+    { n: "Accès à vie", label: "sans expiration" },
+  ];
 
   return (
-    <section className="relative bg-zinc-950 overflow-hidden py-12 md:py-20">
+    <section className="relative bg-zinc-950 overflow-hidden py-10 md:py-16">
 
       {/* Background glows */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
@@ -16,20 +20,12 @@ export default function HeroSection({ data }: { data: CourseAIContent }) {
 
       <div className="relative max-w-2xl mx-auto px-5 text-center">
 
-        {/* Top pill */}
-        <div className="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-full px-4 py-1.5 mb-7">
-          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0" />
-          <span className="text-xs font-medium text-zinc-400 tracking-wide">
-            {isPremium ? "Formation premium" : "Formation en ligne"}
-          </span>
-        </div>
-
         {/* Headline */}
         <h1 className="text-[2rem] sm:text-4xl md:text-5xl font-bold text-white leading-[1.1] tracking-tight mb-5">
           {data.hero.headline}
         </h1>
 
-        {/* Sub-headline */}
+        {/* Subheadline */}
         <p className="text-[0.95rem] text-zinc-400 leading-relaxed mb-8 max-w-md mx-auto">
           {data.hero.subheadline}
         </p>
@@ -44,19 +40,26 @@ export default function HeroSection({ data }: { data: CourseAIContent }) {
           </button>
         </div>
 
-        {/* Social proof strip */}
-        <div className="border-t border-zinc-800/60 pt-6 flex items-center justify-center gap-10 flex-wrap">
-          {[
-            { n: "3 800+", label: "étudiants" },
-            { n: "4.9 / 5", label: "satisfaction" },
-            { n: "Accès à vie", label: "sans expiration" },
-          ].map(({ n, label }) => (
-            <div key={label} className="flex flex-col items-center gap-0.5">
-              <span className="text-sm font-bold text-zinc-200">{n}</span>
-              <span className="text-[11px] text-zinc-600 uppercase tracking-wider">{label}</span>
-            </div>
-          ))}
-        </div>
+        {/* Image or social proof */}
+        {coverImage ? (
+          <div className="relative">
+            <div className="absolute -inset-3 bg-indigo-600/10 rounded-3xl blur-xl" />
+            <img
+              src={coverImage}
+              alt="Illustration de la formation"
+              className="relative w-full rounded-2xl border border-zinc-800 shadow-2xl shadow-black/50 object-cover"
+            />
+          </div>
+        ) : (
+          <div className="border-t border-zinc-800/60 pt-6 flex items-center justify-center gap-10 flex-wrap">
+            {socialProofItems.map(({ n, label }) => (
+              <div key={label} className="flex flex-col items-center gap-0.5">
+                <span className="text-sm font-bold text-zinc-200">{n}</span>
+                <span className="text-[11px] text-zinc-600 uppercase tracking-wider">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
       </div>
     </section>

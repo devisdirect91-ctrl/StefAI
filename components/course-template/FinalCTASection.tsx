@@ -6,7 +6,7 @@ export default function FinalCTASection({ data }: { data: CourseAIContent }) {
   const fcta = data.final_cta;
 
   return (
-    <section className="bg-zinc-900 py-10 md:py-16 relative overflow-hidden">
+    <section className="bg-zinc-900 py-8 md:py-12 relative overflow-hidden">
 
       {/* Top accent line */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />

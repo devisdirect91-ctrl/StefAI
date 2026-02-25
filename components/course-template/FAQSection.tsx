@@ -47,7 +47,7 @@ function FAQItem({ item }: { item: FAQItem }) {
 
 export default function FAQSection({ data }: { data: CourseAIContent }) {
   return (
-    <section className="bg-zinc-950 py-8 md:py-14">
+    <section className="bg-zinc-950 py-6 md:py-10">
       <div className="max-w-2xl mx-auto px-5">
 
         {/* Header */}

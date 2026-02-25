@@ -51,7 +51,7 @@ export default function TestimonialsSection({ data }: { data: CourseAIContent })
   const next = () => setCurrent((i) => (i + 1) % testimonials.length);
 
   return (
-    <section className="bg-zinc-950 py-8 md:py-14">
+    <section className="bg-zinc-950 py-6 md:py-10">
       <div className="max-w-2xl mx-auto px-5">
 
         <div className="text-center mb-6">

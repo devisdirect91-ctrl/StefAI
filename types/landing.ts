@@ -23,6 +23,7 @@ export type CourseContent = {
     subtitle:     string;
     cta:          string;
     secondaryCta: string;
+    cover_image?: string; // optional base64 or URL, injected client-side
   };
   stats:        CourseStat[];
   outcomes:     string[];
