@@ -96,45 +96,6 @@ export default function StylePanel({ theme, onChange }: Props) {
         </div>
       </div>
 
-      {/* Mode */}
-      <div>
-        <SectionLabel>Mode</SectionLabel>
-        <ToggleGroup
-          options={[
-            { label: "Light", value: "light" as const },
-            { label: "Dark",  value: "dark"  as const },
-          ]}
-          value={draft.mode}
-          onChange={(v) => set("mode", v)}
-        />
-      </div>
-
-      {/* Radius */}
-      <div>
-        <SectionLabel>Radius</SectionLabel>
-        <ToggleGroup
-          options={[
-            { label: "Medium", value: "md" as const },
-            { label: "Large",  value: "lg" as const },
-          ]}
-          value={draft.radius}
-          onChange={(v) => set("radius", v)}
-        />
-      </div>
-
-      {/* Spacing */}
-      <div>
-        <SectionLabel>Spacing</SectionLabel>
-        <ToggleGroup
-          options={[
-            { label: "Normal", value: "default" as const },
-            { label: "Large",  value: "relaxed" as const },
-          ]}
-          value={draft.spacing}
-          onChange={(v) => set("spacing", v)}
-        />
-      </div>
-
       {/* Font */}
       <div>
         <SectionLabel>Font</SectionLabel>

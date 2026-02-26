@@ -195,6 +195,7 @@ export default function CreatePage() {
       aiContent.hero = { ...aiContent.hero, cover_image: answers.coverImage };
     }
     setCoursePreview(aiContent);
+    setPreviewMode("mobile");
     setLoading(false);
   };
 
