@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StefAI — Build Landing Pages in Seconds",
+  title: "LandifAI — Build Landing Pages in Seconds",
   description:
     "AI-powered landing page builder for digital products. Generate professional pages instantly and publish with one click.",
 };

@@ -1,16 +1,7 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import { templates } from "@/lib/templates";
 
-const categories = ["All", ...Array.from(new Set(templates.map((t) => t.tag)))];
-
 export default function TemplatesPage() {
-  const [active, setActive] = useState("All");
-
-  const filtered = active === "All" ? templates : templates.filter((t) => t.tag === active);
-
   return (
     <div className="max-w-5xl mx-auto px-8 py-10">
 
@@ -22,26 +13,9 @@ export default function TemplatesPage() {
         </p>
       </div>
 
-      {/* Category filter */}
-      <div className="flex flex-wrap gap-2 mb-7">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActive(cat)}
-            className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all border ${
-              active === cat
-                ? "bg-indigo-500/15 text-indigo-300 border-indigo-500/25"
-                : "text-zinc-500 border-zinc-800 hover:text-zinc-200 hover:border-zinc-700"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.map((tpl) => (
+        {templates.map((tpl) => (
           <div
             key={tpl.id}
             className="group relative bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-2xl overflow-hidden transition-all"

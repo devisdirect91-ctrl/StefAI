@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const IconGrid = () => (
@@ -64,8 +65,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Logo */}
         <div className="h-14 flex items-center px-5 border-b border-zinc-800 shrink-0">
-          <Link href="/" className="font-bold text-zinc-100 text-base tracking-tight hover:text-zinc-300 transition">
-            StefAI
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition">
+            <Image src="/logo.png" alt="LandifAI" width={26} height={26} className="shrink-0" />
+            <span className="font-bold text-zinc-100 text-base tracking-tight">LandifAI</span>
           </Link>
         </div>
 

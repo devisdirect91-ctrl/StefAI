@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -33,8 +34,9 @@ export default function Login() {
 
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
-          <Link href="/" className="font-bold text-zinc-100 text-xl tracking-tight hover:text-zinc-300 transition">
-            StefAI
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition">
+            <Image src="/logo.png" alt="LandifAI" width={32} height={32} className="shrink-0" />
+            <span className="font-bold text-zinc-100 text-xl tracking-tight">LandifAI</span>
           </Link>
         </div>
 
@@ -42,7 +44,7 @@ export default function Login() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 shadow-xl shadow-black/30">
           <div className="mb-7 text-center">
             <h1 className="text-xl font-bold text-zinc-100">Welcome back</h1>
-            <p className="text-sm text-zinc-500 mt-1">Sign in to your StefAI account</p>
+            <p className="text-sm text-zinc-500 mt-1">Sign in to your LandifAI account</p>
           </div>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">

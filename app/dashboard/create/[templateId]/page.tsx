@@ -75,7 +75,7 @@ function DesktopChrome({ children }: { children: React.ReactNode }) {
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
         </div>
         <div className="flex-1 bg-zinc-800 rounded h-5 flex items-center px-3 max-w-xs">
-          <span className="text-[11px] text-zinc-500 truncate">stefai.app/site/...</span>
+          <span className="text-[11px] text-zinc-500 truncate">landifai.app/site/...</span>
         </div>
       </div>
       {children}

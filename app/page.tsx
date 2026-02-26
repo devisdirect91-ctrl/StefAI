@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 /* ── Icons ──────────────────────────────────────────────────────────── */
 const IconCheck = () => (
@@ -36,7 +37,7 @@ function CoursePagePreview() {
             <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
           </div>
           <div className="mx-auto bg-zinc-800 rounded px-4 py-1 text-xs text-zinc-500 font-mono w-44 text-center truncate">
-            stefai.app/ma-formation
+            landifai.app/ma-formation
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -122,8 +123,9 @@ export default function Home() {
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-800/80 backdrop-blur-xl bg-zinc-950/90">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="font-bold text-zinc-100 text-lg tracking-tight">
-            StefAI
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image src="/logo.png" alt="LandifAI" width={28} height={28} className="shrink-0" />
+            <span className="font-bold text-zinc-100 text-lg tracking-tight">LandifAI</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-7 text-sm text-zinc-500">
@@ -163,7 +165,7 @@ export default function Home() {
             </h1>
 
             <p className="text-lg text-zinc-400 leading-relaxed mb-8 max-w-md">
-              Describe your course in a few sentences. StefAI creates a complete, professional page ready to share — in under 2 minutes.
+              Describe your course in a few sentences. LandifAI creates a complete, professional page ready to share — in under 2 minutes.
             </p>
 
             {/* Stars */}
@@ -247,7 +249,7 @@ export default function Home() {
               {
                 step: "2",
                 title: "AI builds your page",
-                desc: "StefAI writes all the copy and assembles a complete, professional page. No blank page syndrome.",
+                desc: "LandifAI writes all the copy and assembles a complete, professional page. No blank page syndrome.",
               },
               {
                 step: "3",
@@ -284,7 +286,7 @@ export default function Home() {
               Everything you need, nothing you don&rsquo;t
             </h2>
             <p className="mt-3 text-zinc-400 max-w-lg mx-auto">
-              We built StefAI for people who have great knowledge to share — not for developers.
+              We built LandifAI for people who have great knowledge to share — not for developers.
             </p>
           </div>
 
@@ -346,7 +348,7 @@ export default function Home() {
                 {[
                   "3 published pages",
                   "10 AI generations / month",
-                  "StefAI subdomain",
+                  "LandifAI subdomain",
                   "Mobile-friendly pages",
                   "Instant publish",
                 ].map(f => (
@@ -378,7 +380,7 @@ export default function Home() {
                   "Unlimited pages",
                   "Unlimited AI generations",
                   "Custom domain",
-                  "Remove StefAI branding",
+                  "Remove LandifAI branding",
                   "Priority support",
                   "Advanced analytics",
                 ].map(f => (
@@ -409,7 +411,7 @@ export default function Home() {
           <div className="space-y-2">
             <FaqItem
               q="Do I need design or tech skills?"
-              a="Not at all. If you can write a few sentences about your course, you have everything you need. StefAI handles the design, the copy, and the layout."
+              a="Not at all. If you can write a few sentences about your course, you have everything you need. LandifAI handles the design, the copy, and the layout."
             />
             <FaqItem
               q="How long does it take to create a page?"
@@ -421,7 +423,7 @@ export default function Home() {
             />
             <FaqItem
               q="Where will my page be hosted?"
-              a="StefAI hosts everything for you. Free plan gets a stefai.app link. Pro plan lets you connect your own domain."
+              a="LandifAI hosts everything for you. Free plan gets a landifai.app link. Pro plan lets you connect your own domain."
             />
             <FaqItem
               q="Can I use my own domain name?"
@@ -455,14 +457,17 @@ export default function Home() {
       <footer className="border-t border-zinc-800 bg-zinc-900/20">
         <div className="max-w-5xl mx-auto px-6 py-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-5">
-            <span className="font-bold text-zinc-100">StefAI</span>
+            <span className="flex items-center gap-2">
+              <Image src="/logo.png" alt="LandifAI" width={22} height={22} className="opacity-80" />
+              <span className="font-bold text-zinc-100">LandifAI</span>
+            </span>
             <div className="flex flex-wrap gap-6 text-sm text-zinc-500">
               {["Pricing", "Privacy", "Terms"].map(l => (
                 <a key={l} href="#" className="hover:text-zinc-300 transition">{l}</a>
               ))}
             </div>
             <div className="text-xs text-zinc-600">
-              &copy; 2026 StefAI. All rights reserved.
+              &copy; 2026 LandifAI. All rights reserved.
             </div>
           </div>
         </div>

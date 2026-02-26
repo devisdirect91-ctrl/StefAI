@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -35,8 +36,9 @@ export default function Signup() {
 
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
-          <Link href="/" className="font-bold text-zinc-100 text-xl tracking-tight hover:text-zinc-300 transition">
-            StefAI
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition">
+            <Image src="/logo.png" alt="LandifAI" width={32} height={32} className="shrink-0" />
+            <span className="font-bold text-zinc-100 text-xl tracking-tight">LandifAI</span>
           </Link>
         </div>
 
